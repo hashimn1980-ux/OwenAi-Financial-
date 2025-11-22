@@ -1,559 +1,552 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OwenAI | Investor Command Center</title>
-
-    <!-- Fonts -->
+    <title>Seed Round Investor Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-display {
+            font-family: 'Manrope', sans-serif;
+        }
+        .glassmorphism {
+            background: rgba(30, 41, 59, 0.5); /* bg-slate-800/50 */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.5); /* border-slate-700/50 */
+        }
+        .icon-glow-green {
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); /* green-500 */
+        }
+        .icon-glow-blue {
+          box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); /* blue-500 */
+        }
+        /* Custom scrollbar for a more modern look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1120; /* Deep navy background */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B; /* slate-800 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155; /* slate-700 */
+        }
+    </style>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            dark: '#0B1120',
-                            sidebar: '#0F172A', // Slate 900
-                            card: 'rgba(15, 23, 42, 0.5)', // Slate 900 / 50%
-                            border: 'rgba(255, 255, 255, 0.1)', // White / 10%
-                            blue: '#3B82F6',
-                            green: '#10B981',
-                        }
+                        'brand-background': '#0B1120',
+                        'brand-primary': '#4F46E5', // A vibrant indigo for active elements
+                        'brand-green': '#10B981',
+                        'brand-blue': '#3B82F6',
+                        'brand-purple': '#8B5CF6',
+                        'brand-teal': '#2DD4BF',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                    }
+                        display: ['Manrope', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-brand-background text-slate-300">
+    <div id="app" class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 p-4">
+            <div class="flex h-full flex-col glassmorphism rounded-lg">
+                <div class="flex items-center gap-2 p-4 border-b border-slate-700/50">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-lg">auto_awesome</span>
+                    </div>
+                    <h1 class="text-xl font-bold text-white font-display">OwenAI</h1>
+                </div>
+                <nav id="main-nav" class="flex-1 p-2 space-y-1">
+                    <a href="#dashboard" data-view="dashboard" class="flex items-center gap-3 px-3 py-2 rounded-md bg-brand-primary text-white font-semibold">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#financials" data-view="financials" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">account_balance</span>
+                        <span>Financial Statements</span>
+                    </a>
+                    <a href="#economics" data-view="economics" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">pie_chart</span>
+                        <span>Unit Economics</span>
+                    </a>
+                    <a href="#bridge" data-view="bridge" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">waterfall_chart</span>
+                        <span>Valuation Bridge</span>
+                    </a>
+                    <a href="#deck" data-view="deck" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">slideshow</span>
+                        <span>Pitch Deck</span>
+                    </a>
+                    <a href="#dataroom" data-view="dataroom" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">folder_open</span>
+                        <span>Data Room</span>
+                    </a>
+                </nav>
+                <div class="p-2 border-t border-slate-700/50">
+                    <div class="px-3 pt-2 pb-2 text-xs font-semibold uppercase text-slate-500">Subscribe & Get Support</div>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">subscriptions</span>
+                        <span>Subscriptions</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-700/50 text-slate-400">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col p-6 pb-24 overflow-y-auto">
+            <!-- Header -->
+            <header class="flex items-center justify-between pb-6">
+                <div class="flex items-center gap-4">
+                    <div id="scenario-slider" class="flex items-center glassmorphism p-1 rounded-full">
+                        <button data-multiplier="0.7" class="px-4 py-1.5 text-sm rounded-full text-slate-400">Conservative</button>
+                        <button data-multiplier="1.0" class="px-4 py-1.5 text-sm rounded-full bg-slate-600 text-white font-semibold">Base Case</button>
+                        <button data-multiplier="1.2" class="px-4 py-1.5 text-sm rounded-full text-slate-400">Optimistic</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <img alt="User avatar" class="w-10 h-10 rounded-full border-2 border-brand-primary" src="https://i.pravatar.cc/40?u=ezz-ali">
+                    <div>
+                        <p class="font-semibold text-white">Ezz Ali</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div id="views-container" class="flex-1">
+                <div id="dashboard-view">
+                    <!-- Hero Cards -->
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="p-4 rounded-lg glassmorphism">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm text-slate-400">Year 5 Revenue</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="hero-revenue">AED 145.1M</p>
+                                    <p class="text-sm text-green-500 mt-2" id="hero-revenue-subtitle">+17.8% vs last month</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center icon-glow-green">
+                                    <span class="material-symbols-outlined text-green-400">paid</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg glassmorphism">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm text-slate-400">Efficiency (LTV:CPAT)</p>
+                                    <p class="text-3xl font-bold text-white mt-1">15.0x</p>
+                                    <p class="text-sm text-green-500 mt-2" id="hero-efficiency-subtitle">+13% vs last month</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center icon-glow-blue">
+                                    <span class="material-symbols-outlined text-blue-400">settings_suggest</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg glassmorphism">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm text-slate-400">MOIC</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="hero-moic">85.2x</p>
+                                    <p class="text-sm text-green-500 mt-2" id="hero-moic-subtitle">+12.8% vs last month</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center icon-glow-green">
+                                    <span class="material-symbols-outlined text-green-400">trending_up</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg glassmorphism">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm text-slate-400">Breakeven</p>
+                                    <p class="text-3xl font-bold text-white mt-1">Month 6</p>
+                                    <p class="text-sm text-green-500 mt-2" id="hero-breakeven-subtitle">+8.2% vs last month</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center icon-glow-blue">
+                                    <span class="material-symbols-outlined text-blue-400">update</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="p-6 rounded-lg glassmorphism">
+                            <h3 class="text-lg font-semibold text-white mb-4">Funding Allocation</h3>
+                            <div class="flex items-center gap-6">
+                                <div class="relative w-40 h-40">
+                                    <canvas id="funding-chart"></canvas>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-3xl font-bold text-white">4M</span>
+                                        <span class="text-sm text-slate-400">100%</span>
+                                    </div>
+                                </div>
+                                <div id="funding-legend" class="flex-1 space-y-4"></div>
+                            </div>
+                        </div>
+                        <div class="p-6 rounded-lg glassmorphism">
+                            <h3 class="text-lg font-semibold text-white mb-4">Valuation Bridge</h3>
+                            <canvas id="valuation-chart"></canvas>
+                        </div>
+                    </div>
+                    <!-- J-Curve Table & Chart -->
+                    <div class="p-6 rounded-lg glassmorphism flex flex-col">
+                        <h3 class="text-lg font-semibold text-white mb-4">Year 1 Monthly Cash Flow (J-Curve)</h3>
+                        <div class="h-80 mb-4">
+                            <canvas id="jcurve-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="financials-view" class="hidden glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white mb-4">Financial Statements</h2>
+                    <!-- P&L Table -->
+                    <h3 class="text-lg font-semibold text-white mb-2">5-Year P&L Summary</h3>
+                    <div class="overflow-x-auto mb-6">
+                        <table class="w-full text-sm text-left">
+                            <thead class="border-b border-slate-700/50 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">Metric</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 1</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 2</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 3</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 4</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 5</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pnl-table-body" class="text-slate-300"></tbody>
+                        </table>
+                    </div>
+                    <!-- Cash Flow Table -->
+                    <h3 class="text-lg font-semibold text-white mb-2">5-Year Cash Flow Summary</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="border-b border-slate-700/50 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium">Metric</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 1</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 2</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 3</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 4</th>
+                                    <th class="px-4 py-3 font-medium text-right">Year 5</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cashflow-table-body" class="text-slate-300"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="economics-view" class="hidden glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white mb-4">Unit Economics</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
+                        <div class="glassmorphism p-6 rounded-lg">
+                            <p class="text-sm text-slate-400">LTV:CPAT Ratio</p>
+                            <p class="text-5xl font-bold text-white mt-2">15.0 : 1</p>
+                        </div>
+                        <div class="glassmorphism p-6 rounded-lg">
+                            <p class="text-sm text-slate-400">Payback Period</p>
+                            <p class="text-5xl font-bold text-white mt-2">1.6 Months</p>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold text-white">The "Step Zero" Advantage</h3>
+                        <p class="text-slate-400 mt-2">Dubai's real estate market suffers from a systemic Trust Deficit. We do not sell leads; we manufacture Transaction-Ready Assets by owning the 6-month 'Step Zero' journey before a client ever meets a broker.</p>
+                    </div>
+                </div>
+                <div id="bridge-view" class="hidden glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white mb-4">Valuation Bridge (Dedicated View)</h2>
+                    <div class="h-96">
+                        <canvas id="valuation-chart-dedicated"></canvas>
+                    </div>
+                </div>
+                <div id="deck-view" class="hidden glassmorphism p-6 rounded-lg">
+                     <h2 class="text-xl font-bold text-white mb-4">Pitch Deck</h2>
+                    <div id="pitch-deck-container" class="relative h-[500px] bg-slate-900/50 rounded-lg flex items-center justify-center p-8">
+                        <!-- Slides will be injected here -->
+                    </div>
+                    <div class="flex items-center justify-center mt-4 gap-4">
+                        <button id="prev-slide" class="px-4 py-2 bg-slate-700/50 rounded-md hover:bg-slate-600/50">&larr; Previous</button>
+                        <div id="slide-indicator" class="text-sm text-slate-400"></div>
+                        <button id="next-slide" class="px-4 py-2 bg-slate-700/50 rounded-md hover:bg-slate-600/50">Next &rarr;</button>
+                    </div>
+                </div>
+                <div id="dataroom-view" class="hidden glassmorphism p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white mb-4">Data Room</h2>
+                    <ul class="space-y-3">
+                        <li class="flex items-center justify-between p-3 bg-slate-800/50 rounded-md hover:bg-slate-700/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-brand-primary">description</span>
+                                <span class="font-medium">Financial Model (2024-2028).xlsx</span>
+                            </div>
+                            <a href="#" class="text-sm text-brand-primary hover:underline">Download</a>
+                        </li>
+                        <li class="flex items-center justify-between p-3 bg-slate-800/50 rounded-md hover:bg-slate-700/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-brand-primary">description</span>
+                                <span class="font-medium">Corporate Deck.pdf</span>
+                            </div>
+                            <a href="#" class="text-sm text-brand-primary hover:underline">Download</a>
+                        </li>
+                        <li class="flex items-center justify-between p-3 bg-slate-800/50 rounded-md hover:bg-slate-700/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-brand-primary">description</span>
+                                <span class="font-medium">Founder Bios.pdf</span>
+                            </div>
+                            <a href="#" class="text-sm text-brand-primary hover:underline">Download</a>
+                        </li>
+                         <li class="flex items-center justify-between p-3 bg-slate-800/50 rounded-md hover:bg-slate-700/50 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-brand-primary">description</span>
+                                <span class="font-medium">Due Diligence Checklist.docx</span>
+                            </div>
+                            <a href="#" class="text-sm text-brand-primary hover:underline">Download</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sticky Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-slate-900/50 backdrop-blur-sm border-t border-slate-700/50 p-4 flex items-center justify-between z-10" style="left: var(--sidebar-width, 0);">
+        <p class="text-sm">Seed Round: <span class="font-bold text-white">Raising AED 4,000,000</span> for <span class="font-bold text-white">17% Equity</span></p>
+        <button class="bg-brand-primary text-white font-semibold px-4 py-2 rounded-md hover:bg-indigo-500 transition-colors">Commit Interest</button>
+    </footer>
+
+    <script>
+    const BASE_DATA = {
+        revenue: [8969940, 27118500, 58987650, 98765432, 145123456],
+        cogs: [-269098, -813555, -1769630, -2962963, -4353704],
+        opex: [-10511146, -16292421, -24552573, -34930567, -47618996],
+        ebitda: [-1810304, 10012524, 32665448, 60871902, 93150756],
+        netIncome: [-2010304, 9812524, 29543557, 55211431, 84585188],
+        cashFlow: [2039696, 9862524, 29593557, 55261431, 84635188],
+        jCurveCash: [3564142, 3112872, 2735890, 2538306, 2415009, 2471111, 2511901, 2642391, 2757368, 2872345, 2702812, 2458992],
+        jCurveBurn: [-435858, -451270, -376982, -197584, -123297, 56102, 40790, 130490, 114977, 114977, -169533, -243820],
+        ltv: 61228,
+        cpat: 4095,
+        ratio: 15.0
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.querySelector('aside');
+        document.documentElement.style.setProperty('--sidebar-width', `${sidebar.offsetWidth}px`);
+
+        const navLinks = document.querySelectorAll('#main-nav a');
+        const views = document.querySelectorAll('#views-container > div');
+        const scenarioSlider = document.getElementById('scenario-slider');
+        const heroRevenue = document.getElementById('hero-revenue');
+        const heroMoic = document.getElementById('hero-moic');
+        const heroRevenueSubtitle = document.getElementById('hero-revenue-subtitle');
+        const heroMoicSubtitle = document.getElementById('hero-moic-subtitle');
+
+        let valuationChart, valuationChartDedicated;
+        let currentMultiplier = 1.0;
+
+        function formatCurrency(value) {
+            return `AED ${(value / 1000000).toFixed(1)}M`;
+        }
+
+        function updateDashboard() {
+            // --- 1. Calculate new data ---
+            const newBridgeData = calculateBridgeData(currentMultiplier);
+            const year5Revenue = BASE_DATA.revenue[4] * currentMultiplier;
+            const seedInvestment = 4000000;
+            const exitValuation = newBridgeData.rawExitValuation;
+            const moic = exitValuation / seedInvestment;
+
+            // --- 2. Update DOM Text (as the first action) ---
+            heroRevenue.textContent = formatCurrency(year5Revenue);
+            heroMoic.textContent = `${moic.toFixed(1)}x`;
+
+            if (currentMultiplier > 1.0) {
+                heroRevenueSubtitle.textContent = `+20.5% vs last month`;
+                heroMoicSubtitle.textContent = `+15.2% vs last month`;
+            } else if (currentMultiplier < 1.0) {
+                heroRevenueSubtitle.textContent = `+15.2% vs last month`;
+                heroMoicSubtitle.textContent = `+10.5% vs last month`;
+            } else {
+                heroRevenueSubtitle.textContent = `+17.8% vs last month`;
+                heroMoicSubtitle.textContent = `+12.8% vs last month`;
+            }
+
+            // --- 3. Update Charts (wrapped in a try...catch) ---
+            try {
+                if (valuationChart && valuationChartDedicated) {
+                    valuationChart.data.datasets[0].data = newBridgeData.data;
+                    valuationChart.update();
+                    valuationChartDedicated.data.datasets[0].data = newBridgeData.data;
+                    valuationChartDedicated.update();
                 }
+            } catch (error) {
+                console.error("Failed to update charts:", error);
             }
         }
-    </script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+        scenarioSlider.addEventListener('click', (event) => {
+            if (event.target.tagName === 'BUTTON') {
+                currentMultiplier = parseFloat(event.target.getAttribute('data-multiplier'));
 
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0B1120; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+                // Update button styles
+                scenarioSlider.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('bg-slate-600', 'text-white', 'font-semibold');
+                    btn.classList.add('text-slate-400');
+                });
+                event.target.classList.add('bg-slate-600', 'text-white', 'font-semibold');
+                event.target.classList.remove('text-slate-400');
 
-        body {
-            background-color: #0B1120;
-            color: white;
+                updateDashboard();
+            }
+        });
+
+        function calculateBridgeData(multiplier) {
+            const seedInvestment = 4000000;
+            const exitMultiple = 2.35; // Derived from base case MOIC
+
+            const exitValuation = BASE_DATA.revenue[4] * multiplier * exitMultiple;
+            const totalValueCreated = exitValuation - seedInvestment;
+
+            // Use base data as weights for value driver attribution
+            const baseRevenue = BASE_DATA.revenue[4];
+            const baseEbitda = BASE_DATA.ebitda[4];
+            const baseCash = BASE_DATA.cashFlow.reduce((a, b) => a + b, 0);
+            const totalDrivers = baseRevenue + baseEbitda + baseCash;
+
+            const revenueComponent = totalValueCreated * (baseRevenue / totalDrivers);
+            const marginComponent = totalValueCreated * (baseEbitda / totalDrivers);
+
+            const bar1End = seedInvestment;
+            const bar2End = bar1End + revenueComponent;
+            const bar3End = bar2End + marginComponent;
+
+            return {
+                labels: ['Seed', 'Revenue', 'Margin', 'Cash', 'Exit'],
+                rawExitValuation: exitValuation,
+                data: [
+                    [0, bar1End],
+                    [bar1End, bar2End],
+                    [bar2End, bar3End],
+                    [bar3End, exitValuation],
+                    [0, exitValuation]
+                ].map(d => d.map(v => v / 1000000)) // Convert to millions for chart scale
+            };
         }
 
-        .glass-card {
-            background-color: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background-color: rgba(30, 41, 59, 0.6);
-            transition: all 0.3s ease;
-        }
-
-        /* Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: transparent; /* Handled by JS for fill effect */
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #3B82F6;
-            cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-            position: relative;
-            z-index: 2;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: transparent;
-            border-radius: 2px;
-        }
-
-        .nav-item.active {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: #60A5FA;
-            border-right: 2px solid #3B82F6;
-        }
-
-        .gradient-text {
-            background: linear-gradient(to right, #3B82F6, #EC4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Circular Progress */
-        .circular-chart {
-            display: block;
-            margin: 0 auto;
-            max-width: 80%;
-            max-height: 250px;
-        }
-        .circle-bg {
-            fill: none;
-            stroke: rgba(30, 41, 59, 0.5); /* Slate 800/50 */
-            stroke-width: 2.5;
-        }
-        .circle {
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            animation: progress 1s ease-out forwards;
-        }
-        @keyframes progress {
-            0% { stroke-dasharray: 0 100; }
-        }
-    </style>
-</head>
-<body class="h-screen flex overflow-hidden text-sm antialiased selection:bg-blue-500 selection:text-white">
-
-    <!-- LEFT SIDEBAR (Desktop) -->
-    <aside class="w-64 bg-slate-900 border-r border-white/5 flex-col hidden md:flex z-20 flex-shrink-0">
-        <!-- Brand -->
-        <div class="h-16 flex items-center px-6 border-b border-white/5">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white mr-3 shadow-lg shadow-blue-500/20">OA</div>
-            <div>
-                <h1 class="font-bold text-white tracking-tight">OwenAI</h1>
-                <div class="text-[10px] text-slate-400 uppercase tracking-wider">Investor Portal</div>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex-1 py-6 space-y-1">
-            <a href="#" onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors group">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                Dashboard
-            </a>
-            <a href="#" onclick="switchView('unit')" id="nav-unit" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                Unit Economics
-            </a>
-            <a href="#" onclick="switchView('valuation')" id="nav-valuation" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Valuation Bridge
-            </a>
-            <div class="px-6 pt-4 pb-2">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Settings</div>
-            </div>
-             <a href="#" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Configuration
-            </a>
-        </nav>
-
-        <!-- User Profile -->
-        <div class="p-4 border-t border-white/5">
-            <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=John+Doe&background=0D8ABC&color=fff" alt="User" class="w-8 h-8 rounded-full border border-white/10">
-                <div>
-                    <div class="text-sm font-medium text-white">Investor</div>
-                    <div class="text-xs text-slate-500">investor@vc.com</div>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col relative min-w-0 overflow-hidden bg-[#0B1120]">
-
-        <!-- TOP HEADER -->
-        <header class="h-16 bg-slate-900/50 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 md:px-8 z-10">
-            <div class="flex items-center gap-4">
-                <h2 id="page-title" class="text-xl font-semibold text-white">Dashboard</h2>
-            </div>
-
-            <!-- Scenario Slider -->
-            <div class="flex items-center gap-4 bg-slate-800/50 px-4 py-2 rounded-full border border-white/5">
-                <span class="text-xs text-slate-400 font-medium uppercase tracking-wide hidden sm:inline">Scenario</span>
-                <input type="range" min="0" max="2" step="1" value="1" class="w-24 sm:w-32" id="scenarioSlider" oninput="updateScenario(this.value)">
-                <span class="text-xs font-bold text-blue-400 w-20 text-right" id="scenarioLabel">Base Case</span>
-            </div>
-        </header>
-
-        <!-- SCROLLABLE CONTENT AREA -->
-        <div class="flex-1 overflow-y-auto p-6 pb-24 scroll-smooth">
-            <div class="max-w-7xl mx-auto space-y-6">
-
-                <!-- VIEW: DASHBOARD -->
-                <div id="view-dashboard" class="animate-fade-in space-y-6">
-                    <!-- Row 1: Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Card 1: MOIC -->
-                        <div class="glass-card p-5 rounded-xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full -mr-6 -mt-6 blur-xl"></div>
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Implied MOIC</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_moic">190.5x</div>
-                            <div class="text-xs text-green-400 mt-2 font-medium flex items-center">
-                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
-                                Venture Scale Return
-                            </div>
-                        </div>
-
-                        <!-- Card 2: LTV Ratio -->
-                        <div class="glass-card p-5 rounded-xl">
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">LTV : CPAT Ratio</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_ltv">15.0 : 1</div>
-                            <div class="text-xs text-blue-400 mt-2 font-medium">
-                                Payback: <span id="hero_payback" class="text-white">1.6</span> Months
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Revenue -->
-                        <div class="glass-card p-5 rounded-xl relative overflow-hidden">
-                            <div class="absolute bottom-0 right-0 w-20 h-20 bg-purple-500/10 rounded-tl-full -mr-6 -mb-6 blur-xl"></div>
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Year 5 Revenue</div>
-                            <div class="text-3xl font-bold text-white tracking-tight gradient-text" id="hero_rev">AED 145M</div>
-                            <div class="text-xs text-purple-400 mt-2 font-medium">
-                                94% CAGR (Hypergrowth)
-                            </div>
-                        </div>
-
-                        <!-- Card 4: Breakeven -->
-                        <div class="glass-card p-5 rounded-xl">
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Cash Flow Positive</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_breakeven">Month 6</div>
-                            <div class="text-xs text-orange-400 mt-2 font-medium">
-                                Rapid De-Risking
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- J-Curve -->
-                        <div class="glass-card p-6 rounded-xl flex flex-col h-96">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Capital Efficiency (Year 1)</h3>
-                                    <p class="text-xs text-slate-400">Monthly Net Burn vs. Cumulative Cash Balance</p>
-                                </div>
-                                <span class="bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] px-2 py-1 rounded-full font-bold">Profitable in 6 Months</span>
-                            </div>
-                            <div class="flex-1 relative w-full h-full">
-                                <canvas id="jCurveChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Valuation Waterfall -->
-                        <div class="glass-card p-6 rounded-xl flex flex-col h-96">
-                             <div class="flex justify-between items-center mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Path to Value Creation</h3>
-                                    <p class="text-xs text-slate-400">From Seed Investment to Year 5 Equity Value</p>
-                                </div>
-                                <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] px-2 py-1 rounded-full font-bold">4.0x Rev Multiple</span>
-                            </div>
-                            <div class="flex-1 relative w-full h-full">
-                                <canvas id="valuationChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW: UNIT ECONOMICS -->
-                <div id="view-unit" class="hidden animate-fade-in space-y-6">
-                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Unit Eco Card 1 -->
-                        <div class="glass-card p-10 rounded-xl flex flex-col justify-center items-center relative overflow-hidden h-96">
-                            <div class="w-full flex justify-between items-start mb-auto">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">The Economic Engine</h3>
-                                    <p class="text-xs text-slate-400">Efficiency at Scale</p>
-                                </div>
-                                <div class="bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-500/20">Elite Tier</div>
-                            </div>
-
-                            <div class="text-center mb-auto">
-                                <div class="text-7xl font-bold text-white tracking-tighter mb-3 drop-shadow-2xl" id="unit_ltv_ratio">15.0 : 1</div>
-                                <div class="text-sm text-blue-500 font-bold uppercase tracking-[0.2em]">LTV : CPAT Ratio</div>
-                            </div>
-
-                            <div class="w-full p-4 bg-slate-800/50 rounded-lg border border-white/5 mt-auto">
-                                <p class="text-sm text-slate-300 text-center">
-                                    For every <span class="text-white font-bold">AED 1</span> spent on GTM, OwenAI generates <span class="text-green-400 font-bold">AED 15</span> in Lifetime Value.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Unit Eco Card 2 -->
-                        <div class="glass-card p-10 rounded-xl flex flex-col items-center justify-center relative h-96">
-                            <div class="w-full flex justify-between items-start absolute top-10 left-10">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Payback Velocity</h3>
-                                    <p class="text-xs text-slate-400">Time to recover CAC</p>
-                                </div>
-                            </div>
-
-                            <div class="relative mt-8">
-                                <svg viewBox="0 0 36 36" class="circular-chart w-56 h-56">
-                                    <path class="circle-bg"
-                                      d="M18 2.0845
-                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                    <path class="circle" stroke="#3B82F6" stroke-dasharray="86, 100"
-                                      d="M18 2.0845
-                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-5xl font-bold text-white tracking-tight">1.6</span>
-                                    <span class="text-xs text-slate-400 uppercase mt-1 tracking-wide">Months</span>
-                                </div>
-                            </div>
-
-                            <div class="absolute bottom-10 text-xs text-center text-slate-500 max-w-xs px-4">
-                                Best-in-class B2B SaaS benchmarks suggest < 12 months. OwenAI achieves this in < 2 months.
-                            </div>
-                        </div>
-                     </div>
-                </div>
-
-                <!-- VIEW: VALUATION BRIDGE -->
-                <div id="view-valuation" class="hidden animate-fade-in space-y-6">
-                    <!-- Header Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="glass-card p-6 rounded-xl">
-                            <div class="text-xs text-slate-400 uppercase font-medium tracking-wider mb-2">Initial Investment</div>
-                            <div class="text-3xl font-bold text-white">AED 4M</div>
-                        </div>
-                        <div class="glass-card p-6 rounded-xl">
-                             <div class="text-xs text-slate-400 uppercase font-medium tracking-wider mb-2">Total Value Created</div>
-                            <div class="text-3xl font-bold text-white" id="val_created">AED 758M</div>
-                        </div>
-                        <div class="glass-card p-6 rounded-xl border-blue-500/30 bg-blue-900/10 relative overflow-hidden">
-                             <div class="absolute right-0 top-0 w-32 h-32 bg-blue-500/20 rounded-bl-full blur-2xl -mr-10 -mt-10"></div>
-                             <div class="text-xs text-blue-400 uppercase font-bold tracking-wider mb-2">Final Equity Value</div>
-                            <div class="text-3xl font-bold text-white relative z-10" id="val_final_equity">AED 762M</div>
-                        </div>
-                    </div>
-
-                    <!-- Big Bridge Chart -->
-                    <div class="glass-card p-8 rounded-xl h-[500px] flex flex-col">
-                        <div class="mb-8">
-                            <h3 class="text-xl font-bold text-white">Value Creation Bridge: Seed to Exit</h3>
-                            <p class="text-xs text-slate-400 mt-1">Attribution of equity value generation over 5 years</p>
-                        </div>
-                        <div class="flex-1 relative w-full h-full">
-                            <canvas id="bridgeChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- STICKY FOOTER -->
-        <div class="absolute bottom-0 left-0 right-0 h-16 bg-slate-900/95 backdrop-blur border-t border-blue-500/20 flex items-center justify-between px-6 md:px-8 z-30 shadow-[0_-10px_40px_-15px_rgba(59,130,246,0.3)]">
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
-                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full absolute top-0 left-0 animate-ping opacity-75"></div>
-                </div>
-                <div class="text-sm font-medium text-slate-300">
-                    Raising <span class="text-white font-bold text-lg ml-1">AED 4,000,000</span> for <span class="text-blue-400 font-bold text-lg ml-1">17% Equity</span>
-                </div>
-            </div>
-            <button class="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:scale-105 border border-blue-400/20">
-                Invest Now
-            </button>
-        </div>
-    </main>
-
-    <!-- MOBILE NAV (Bottom) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-white/10 flex items-center justify-around z-40 pb-safe">
-         <a href="#" onclick="switchView('dashboard')" class="flex flex-col items-center text-blue-500">
-            <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            <span class="text-[10px]">Dash</span>
-        </a>
-        <a href="#" onclick="switchView('unit')" class="flex flex-col items-center text-slate-500 hover:text-white">
-            <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-            <span class="text-[10px]">Units</span>
-        </a>
-        <a href="#" onclick="switchView('valuation')" class="flex flex-col items-center text-slate-500 hover:text-white">
-             <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span class="text-[10px]">Value</span>
-        </a>
-    </nav>
-
-    <!-- DATA LOGIC ENGINE -->
-    <script>
-        // --- DATA ENGINE (Unified with Source of Truth) ---
-        const BASE_DATA = {
-            revenue: [8969940, 27118500, 58987650, 98765432, 145123456],
-            ebitda: [-1810304, 10012524, 32665448, 60871902, 93150756],
-            netIncome: [-2010304, 9812524, 29543557, 55211431, 84585188],
-            cashFlow: [2039696, 9862524, 29593557, 55261431, 84635188],
-            jCurveCash: [3564142, 3112872, 2735890, 2538306, 2415009, 2471111, 2511901, 2642391, 2757368, 2872345, 2702812, 2458992],
-            jCurveBurn: [-435858, -451270, -376982, -197584, -123297, 56102, 40790, 130490, 114977, 114977, -169533, -243820]
-        };
-
-        let currentScenario = 1; // 0: Conservative, 1: Base, 2: Optimistic
-        const SCENARIOS = [
-            { name: "Conservative", mult: 0.7, labelClass: "text-orange-400" },
-            { name: "Base Case", mult: 1.0, labelClass: "text-blue-400" },
-            { name: "Optimistic", mult: 1.2, labelClass: "text-green-400" }
-        ];
-
-        // --- CHARTS ---
-        let jChart, vChart, bChart;
-
-        // Chart Defaults for Dark Mode
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.font.family = 'Inter';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
-
-        function initCharts() {
-            // --- J-CURVE CHART (DASHBOARD) ---
-            const ctxJ = document.getElementById('jCurveChart').getContext('2d');
-
-            const gradientJ = ctxJ.createLinearGradient(0, 0, 0, 300);
-            gradientJ.addColorStop(0, 'rgba(37, 99, 235, 0.3)');
-            gradientJ.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
-
-            jChart = new Chart(ctxJ, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                        {
-                            label: 'Cash Balance',
-                            data: BASE_DATA.jCurveCash,
-                            borderColor: '#3B82F6',
-                            backgroundColor: gradientJ,
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 2,
-                            pointBackgroundColor: '#3B82F6',
-                            pointRadius: 3,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Net Burn/Gain',
-                            data: BASE_DATA.jCurveBurn,
-                            type: 'bar',
-                            backgroundColor: (ctx) => ctx.raw >= 0 ? '#10B981' : '#F43F5E',
-                            yAxisID: 'y1',
-                            barThickness: 6,
-                            borderRadius: 4
+        // --- CHART RENDERING ---
+        function renderCharts() {
+            // Funding Allocation Chart
+            const fundingCtx = document.getElementById('funding-chart').getContext('2d');
+            const fundingData = {
+                labels: ['Product Development', 'Go-To-Market', 'Operations'],
+                datasets: [{
+                    data: [40, 30, 30],
+                    backgroundColor: ['#3B82F6', '#8B5CF6', '#2DD4BF'],
+                    borderColor: '#0B1120',
+                    borderWidth: 4,
+                }]
+            };
+            new Chart(fundingCtx, {
+                type: 'doughnut',
+                data: fundingData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false // Disable default legend
                         }
-                    ]
+                    }
+                }
+            });
+            // Custom Legend for Funding Allocation
+            const legendContainer = document.getElementById('funding-legend');
+            fundingData.labels.forEach((label, index) => {
+                const color = fundingData.datasets[0].backgroundColor[index];
+                const value = fundingData.datasets[0].data[index];
+                const legendItem = `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full" style="background-color: ${color}"></div>
+                                <span class="text-sm text-slate-400">${label}</span>
+                            </div>
+                            <span class="text-sm font-semibold text-white">${value}%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-slate-700 rounded-full">
+                            <div class="h-full rounded-full" style="width: ${value}%; background-color: ${color}"></div>
+                        </div>
+                    </div>
+                `;
+                legendContainer.innerHTML += legendItem;
+            });
+
+            // Valuation Bridge Chart
+            const bridgeData = calculateBridgeData(currentMultiplier);
+            const valuationCtx = document.getElementById('valuation-chart').getContext('2d');
+            valuationChart = new Chart(valuationCtx, {
+                type: 'bar',
+                data: {
+                    labels: bridgeData.labels,
+                    datasets: [{
+                        label: 'Valuation (in millions)',
+                        data: bridgeData.data,
+                        backgroundColor: ['#2DD4BF', '#10B981', '#10B981', '#10B981', '#3B82F6'],
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            titleColor: '#fff',
-                            bodyColor: '#cbd5e1',
-                            borderColor: 'rgba(255,255,255,0.1)',
-                            borderWidth: 1,
-                            padding: 10,
-                            cornerRadius: 8
-                        },
-                        annotation: {
-                            annotations: {
-                                line1: {
-                                    type: 'line',
-                                    yMin: 2415009,
-                                    yMax: 2415009,
-                                    borderColor: '#F59E0B',
-                                    borderDash: [5, 5],
-                                    borderWidth: 1,
-                                    label: {
-                                        content: 'Low: 2.4M',
-                                        display: true,
-                                        position: 'start',
-                                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
-                                        color: '#fbbf24',
-                                        font: { size: 10 }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8,
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            grid: { display: false },
-                            ticks: { callback: (val) => (val/1000000).toFixed(1) + 'M' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { callback: (val) => (val/1000).toFixed(0) + 'k' }
-                        },
                         x: {
-                            grid: { display: false }
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#94a3b8' },
+                            beginAtZero: true
                         }
                     }
                 }
             });
 
-            // --- VALUATION WATERFALL (Init with dummy data, updated immediately) ---
-            const ctxV = document.getElementById('valuationChart').getContext('2d');
-
-            // Colors: Green for intermediate, Blue for Final (Equity Value)
-            const waterfallColors = ['#10B981', '#10B981', '#10B981', '#10B981', '#3B82F6'];
-
-            vChart = new Chart(ctxV, {
-                type: 'bar',
+            // J-Curve Chart
+            const jCurveCtx = document.getElementById('jcurve-chart').getContext('2d');
+            new Chart(jCurveCtx, {
+                type: 'line',
                 data: {
-                    labels: ['Seed', 'Growth', 'Margin', 'Cash', 'Equity Value'],
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     datasets: [{
-                        label: 'Value Creation (AED)',
-                        data: [], // Populated in updateScenario
-                        backgroundColor: waterfallColors,
-                        borderRadius: 4,
-                        barPercentage: 0.6
+                        label: 'Net Cash Flow',
+                        data: BASE_DATA.jCurveBurn,
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3B82F6'
                     }]
                 },
                 options: {
@@ -561,198 +554,158 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            ticks: { callback: (val) => (val/1000000).toFixed(0) + 'M' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-
-            // --- VALUATION BRIDGE CHART (FULL VIEW) ---
-            const ctxB = document.getElementById('bridgeChart').getContext('2d');
-            bChart = new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: ['Initial Investment', 'Revenue Growth', 'Margin Expansion', 'Cash Accumulation', 'Total Equity Value'],
-                    datasets: [{
-                        label: 'Value Attribution',
-                        data: [], // Populated in updateScenario
-                        backgroundColor: waterfallColors,
-                        borderRadius: 6,
-                        barPercentage: 0.5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            titleColor: '#fff',
-                            callbacks: {
-                                label: function(context) {
-                                    let val = context.raw[1] || context.raw;
-                                    if (Array.isArray(context.raw)) val = context.raw[1] - context.raw[0];
-                                    return "AED " + (val / 1000000).toFixed(1) + "M";
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: (val) => (val/1000000).toFixed(0) + 'M',
-                                font: { size: 12 }
-                            },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                        },
                         x: {
                             grid: { display: false },
-                            ticks: { font: { size: 12 } }
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) { return (value / 1000) + 'k'; }
+                            }
                         }
                     }
                 }
             });
         }
 
-        // --- LOGIC ---
-        function updateScenario(val) {
-            currentScenario = parseInt(val);
-            const scen = SCENARIOS[currentScenario];
-            const mult = scen.mult;
-
-            // 1. Update Slider UI (Progress Fill)
-            const sliderEl = document.getElementById('scenarioSlider');
-            const percentage = (sliderEl.value - sliderEl.min) / (sliderEl.max - sliderEl.min) * 100;
-            sliderEl.style.background = `linear-gradient(to right, #3B82F6 ${percentage}%, #1e293b ${percentage}%)`;
-
-            // 2. Update Label
-            const labelEl = document.getElementById('scenarioLabel');
-            labelEl.innerText = scen.name;
-            labelEl.className = `text-xs font-bold w-20 text-right ${scen.labelClass}`;
-
-            // 3. Core Math
-            const y5Rev = BASE_DATA.revenue[4] * mult;
-            const y5Cash = 181392396 * mult; // Approx scaling of cumulative cash
-            const ev = y5Rev * 4.0; // 4.0x Multiple
-            const eqVal = ev + y5Cash; // Equity Value = Enterprise Value + Cash
-            const seed = 4000000;
-            const moic = eqVal / seed;
-            const ltv = 15.0 * (mult > 1 ? 1.1 : (mult < 1 ? 0.8 : 1.0));
-            const valCreated = eqVal - seed;
-
-            // 4. DOM Text Updates
-            document.getElementById('hero_moic').innerText = moic.toFixed(1) + "x";
-            document.getElementById('hero_rev').innerText = "AED " + (y5Rev/1000000).toFixed(0) + "M";
-            document.getElementById('hero_ltv').innerText = ltv.toFixed(1) + " : 1";
-
-            if(document.getElementById('unit_ltv_ratio')) {
-                document.getElementById('unit_ltv_ratio').innerText = ltv.toFixed(1) + " : 1";
-            }
-
-            if(document.getElementById('val_final_equity')) {
-                document.getElementById('val_final_equity').innerText = "AED " + (eqVal/1000000).toFixed(0) + "M";
-            }
-
-            if(document.getElementById('val_created')) {
-                 document.getElementById('val_created').innerText = "AED " + (valCreated/1000000).toFixed(0) + "M";
-            }
-
-            // 5. Chart Updates
-            // A. J-Curve: Scale data slightly by mult
-            if (jChart) {
-                const scaledCash = BASE_DATA.jCurveCash.map(v => v * mult);
-                const scaledBurn = BASE_DATA.jCurveBurn.map(v => v * mult);
-                jChart.data.datasets[0].data = scaledCash;
-                jChart.data.datasets[1].data = scaledBurn;
-                jChart.update();
-            }
-
-            // B. Waterfall Data Construction
-            // Components: Seed (4M) -> Rev Growth -> Margin -> Cash -> Total
-            // We need to back-solve the "Waterfall" components to sum to EqVal.
-            // Let's assume proportional growth for the intermediate steps based on the Base Case logic.
-
-            // Base Case (approx):
-            // Rev (145M * 4 = 580M EV) + Cash (181M) = 761M EqVal.
-            // Waterfall Steps:
-            // 1. Seed: 4M
-            // 2. Rev Growth: The bulk of EV (e.g. 250M)
-            // 3. Margin Expansion: The rest of EV (e.g. 330M) -> Total EV = 580M
-            // 4. Cash Accumulation: 181M
-
-            // Dynamic logic:
-            const revComponent = (y5Rev * 4.0) * 0.45; // 45% of EV attributed to pure "Growth"
-            const marginComponent = (y5Rev * 4.0) * 0.55; // 55% attributed to "Margin"
-            const cashComponent = y5Cash;
-
-            const w1 = seed;
-            const w2 = w1 + revComponent;
-            const w3 = w2 + marginComponent;
-            const w4 = w3 + cashComponent; // Should equal eqVal
-
-            const newWaterfallData = [
-                [0, w1], // Seed
-                [w1, w2], // Growth
-                [w2, w3], // Margin
-                [w3, w4], // Cash
-                [0, w4]   // Total
-            ];
-
-            if (vChart) {
-                vChart.data.datasets[0].data = newWaterfallData;
-                vChart.update();
-            }
-            if (bChart) {
-                bChart.data.datasets[0].data = newWaterfallData;
-                bChart.update();
+        function showView(viewId) {
+            views.forEach(view => {
+                view.classList.add('hidden');
+            });
+            const targetView = document.getElementById(viewId + '-view');
+            if (targetView) {
+                targetView.classList.remove('hidden');
             }
         }
 
-        // View Switching Logic
-        function switchView(viewId) {
-            // Hide all views
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-unit').classList.add('hidden');
-            document.getElementById('view-valuation').classList.add('hidden');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const viewId = link.getAttribute('data-view');
 
-            // Show selected view
-            document.getElementById('view-' + viewId).classList.remove('hidden');
+                // Update active state
+                navLinks.forEach(navLink => {
+                    navLink.classList.remove('bg-brand-primary', 'text-white', 'font-semibold');
+                    navLink.classList.add('hover:bg-slate-700/50', 'text-slate-400');
+                });
+                link.classList.add('bg-brand-primary', 'text-white', 'font-semibold');
+                link.classList.remove('hover:bg-slate-700/50', 'text-slate-400');
 
-            // Update Nav State
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active', 'text-blue-400', 'bg-blue-500/10', 'border-r-2', 'border-blue-500');
-                el.classList.add('text-slate-400');
+                showView(viewId);
+            });
+        });
+
+        // Show the dashboard by default
+        showView('dashboard');
+
+        // Initial chart render
+        renderCharts();
+
+        // --- DATA TABLE RENDERING ---
+        function populateFinancialTables() {
+            const pnlBody = document.getElementById('pnl-table-body');
+            const cashflowBody = document.getElementById('cashflow-table-body');
+            const formatFinNumber = (num) => (num / 1000).toLocaleString('en-US', { style: 'currency', currency: 'AED' }).replace('AED', '') + 'k';
+
+            const pnlMetrics = ['revenue', 'cogs', 'opex', 'ebitda', 'netIncome'];
+            const pnlLabels = ['Revenue', 'COGS', 'OPEX', 'EBITDA', 'Net Income'];
+
+            pnlMetrics.forEach((metric, index) => {
+                let rowHtml = `<tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">${pnlLabels[index]}</td>`;
+                BASE_DATA[metric].forEach(val => {
+                    rowHtml += `<td class="px-4 py-3 text-right font-mono ${val >= 0 ? 'text-green-400' : 'text-red-400'}">${formatFinNumber(val)}</td>`;
+                });
+                rowHtml += `</tr>`;
+                pnlBody.innerHTML += rowHtml;
             });
 
-            // Add active class to current nav item
-            const navId = 'nav-' + viewId;
-            const navEl = document.getElementById(navId);
-            if(navEl) {
-                navEl.classList.add('active', 'text-blue-400', 'bg-blue-500/10', 'border-r-2', 'border-blue-500');
-                navEl.classList.remove('text-slate-400');
-            }
-
-            // Update Title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'unit': 'Unit Economics',
-                'valuation': 'Valuation Bridge'
-            };
-            document.getElementById('page-title').innerText = titles[viewId];
+            let cashflowHtml = `<tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Net Cash Flow</td>`;
+            BASE_DATA.cashFlow.forEach(val => {
+                cashflowHtml += `<td class="px-4 py-3 text-right font-mono ${val >= 0 ? 'text-green-400' : 'text-red-400'}">${formatFinNumber(val)}</td>`;
+            });
+            cashflowHtml += `</tr>`;
+            cashflowBody.innerHTML = cashflowHtml;
         }
 
-        // Init
-        window.onload = () => {
-            initCharts();
-            // Force initial slider update
-            const slider = document.getElementById('scenarioSlider');
-            updateScenario(slider.value);
-        };
+        populateFinancialTables();
 
+        // --- PITCH DECK LOGIC ---
+        const pitchDeckContainer = document.getElementById('pitch-deck-container');
+        const prevSlideBtn = document.getElementById('prev-slide');
+        const nextSlideBtn = document.getElementById('next-slide');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        const slides = [
+            { title: "The Market Failure", body: "85% of buyers are international. They face a chaotic 6-month \"Step Zero\" void before reaching an agent. This results in a dismal 1.2% conversion rate and 55% wasted agent time.", subtitle: "The AED 522 Billion Trust Deficit" },
+            { title: "The Solution", body: "We replace the chaos with an orchestrated digital workforce. The Strategist runs ROI math, the Empath analyzes vocal tones, and the Guardian ensures RERA compliance.", subtitle: "Multi-Agent Intelligence System" },
+            { title: "The Moat", body: "Our founder wrote the ethics curriculum for the Dubai Land Department. This regulatory DNA is hard-coded into our AI, creating a defensible moat that competitors cannot simply \"hire.\"", subtitle: "The Architect's Authority" },
+            { title: "Traction", body: "We have secured advanced commitments from 6+ Tier One brokerages (including Fidu & D&B Properties), representing 280+ agents ready to integrate on Day 1.", subtitle: "Launch Cohort Secured" },
+            { title: "The Vision", body: "We are building the cognitive infrastructure of the market. By owning the start of the journey, we control the destination.", subtitle: "Global Trust Infrastructure" }
+        ];
+
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            const slide = slides[index];
+            pitchDeckContainer.innerHTML = `
+                <div class="text-center">
+                    <p class="text-brand-primary font-semibold mb-2">${slide.title}</p>
+                    <h3 class="text-3xl font-bold text-white mb-4">${slide.subtitle}</h3>
+                    <p class="text-slate-400 max-w-2xl mx-auto">${slide.body}</p>
+                </div>
+            `;
+            slideIndicator.textContent = `Slide ${index + 1} of ${slides.length}`;
+        }
+
+        prevSlideBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        nextSlideBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        showSlide(currentSlide);
+
+        // Render dedicated valuation chart
+        const valuationCtxDedicated = document.getElementById('valuation-chart-dedicated').getContext('2d');
+        valuationChartDedicated = new Chart(valuationCtxDedicated, {
+            type: 'bar',
+            data: {
+                labels: bridgeData.labels,
+                datasets: [{
+                    label: 'Valuation (in millions)',
+                    data: bridgeData.data,
+                    backgroundColor: ['#2DD4BF', '#10B981', '#10B981', '#10B981', '#3B82F6'],
+                }]
+            },
+            options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#94a3b8' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+        });
+
+        // Initial dashboard update after charts are created
+        updateDashboard();
+    });
     </script>
 </body>
 </html>
