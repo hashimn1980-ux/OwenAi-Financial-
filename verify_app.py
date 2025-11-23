@@ -34,9 +34,8 @@ def run():
         page.click("#nav-dashboard")
         time.sleep(1)
 
-        # Move slider to Optimistic (Value 2)
-        page.fill("#scenarioSlider", "2")
-        page.dispatch_event("#scenarioSlider", "input")
+        # Click Optimistic Button
+        page.click("#btn-optimistic")
         time.sleep(1)
         page.screenshot(path="dashboard_optimistic.png")
         print("Optimistic Dashboard screenshot taken.")
