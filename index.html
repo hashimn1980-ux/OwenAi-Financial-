@@ -290,71 +290,40 @@
 <div class="flex-1 p-6 rounded-xl glassmorphism-light dark:glassmorphism-dark flex flex-col hover-lift">
 <div class="flex items-center justify-between mb-4">
 <div class="flex items-center gap-1 border border-slate-700/50 rounded-lg p-1">
-<button class="px-4 py-1.5 text-sm rounded-md bg-slate-600 text-white font-semibold">Income Statement</button>
-<button class="px-4 py-1.5 text-sm rounded-md text-gray-400">Balance Sheet</button>
-<button class="px-4 py-1.5 text-sm rounded-md text-gray-400">Cash Flow</button>
-</div>
-<div class="flex items-center gap-4">
-<div class="relative">
-<select class="appearance-none w-48 pl-4 pr-10 py-2 rounded-md bg-black/20 border border-slate-700/50 focus:ring-2 focus:ring-primary focus:border-primary text-gray-300">
-<option>Q3 2024</option>
-<option>Q2 2024</option>
-<option>Q1 2024</option>
-<option>Q4 2023</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+    <button id="btn-fin-income" onclick="switchFinTab('income')" class="fin-tab-btn px-4 py-1.5 text-sm rounded-md bg-slate-600 text-white font-semibold">Income Statement</button>
+    <button id="btn-fin-balance" onclick="switchFinTab('balance')" class="fin-tab-btn px-4 py-1.5 text-sm rounded-md text-gray-400">Balance Sheet</button>
+    <button id="btn-fin-cashflow" onclick="switchFinTab('cashflow')" class="fin-tab-btn px-4 py-1.5 text-sm rounded-md text-gray-400">Cash Flow</button>
 </div>
 </div>
+<div id="fin-tab-income" class="flex-1 overflow-x-auto">
+    <table class="w-full text-sm text-left">
+        <thead>
+            <!-- Headers will be dynamically inserted here -->
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically inserted here -->
+        </tbody>
+    </table>
 </div>
-<div class="flex-1 overflow-x-auto">
-<table class="w-full text-sm text-left">
-<thead class="border-b border-slate-700/50 text-gray-400 uppercase">
-<tr>
-<th class="px-4 py-3 font-medium">Account</th>
-<th class="px-4 py-3 font-medium text-right">Q3 2024</th>
-<th class="px-4 py-3 font-medium text-right">Q2 2024</th>
-<th class="px-4 py-3 font-medium text-right">Change</th>
-</tr>
-</thead>
-<tbody class="text-gray-300">
-<tr class="border-b border-slate-800/50">
-<td class="px-4 py-3 font-semibold">Revenue</td>
-<td class="px-4 py-3 text-right">35,800,000</td>
-<td class="px-4 py-3 text-right">34,020,000</td>
-<td class="px-4 py-3 text-right text-green-400">+5.2%</td>
-</tr>
-<tr class="border-b border-slate-800/50">
-<td class="px-4 py-3 font-semibold">Cost of Goods Sold</td>
-<td class="px-4 py-3 text-right">(14,320,000)</td>
-<td class="px-4 py-3 text-right">(14,000,000)</td>
-<td class="px-4 py-3 text-right text-red-400">+2.3%</td>
-</tr>
-<tr class="border-b border-slate-800/50">
-<td class="px-4 py-3 font-bold">Gross Profit</td>
-<td class="px-4 py-3 font-bold text-right">21,480,000</td>
-<td class="px-4 py-3 font-bold text-right">20,020,000</td>
-<td class="px-4 py-3 font-bold text-right text-green-400">+7.3%</td>
-</tr>
-<tr class="border-b border-slate-800/50">
-<td class="px-4 py-3 pl-8">Operating Expenses</td>
-<td class="px-4 py-3 text-right">(8,500,000)</td>
-<td class="px-4 py-3 text-right">(8,200,000)</td>
-<td class="px-4 py-3 text-right text-red-400">+3.7%</td>
-</tr>
-<tr class="border-b border-slate-800/50">
-<td class="px-4 py-3 font-bold">Operating Income</td>
-<td class="px-4 py-3 font-bold text-right">12,980,000</td>
-<td class="px-4 py-3 font-bold text-right">11,820,000</td>
-<td class="px-4 py-3 font-bold text-right text-green-400">+9.8%</td>
-</tr>
-<tr>
-<td class="px-4 py-3 font-bold text-lg">Net Income</td>
-<td class="px-4 py-3 font-bold text-lg text-right">8,200,000</td>
-<td class="px-4 py-3 font-bold text-lg text-right">7,310,000</td>
-<td class="px-4 py-3 font-bold text-lg text-right text-green-400">+12.1%</td>
-</tr>
-</tbody>
-</table>
+<div id="fin-tab-balance" class="flex-1 overflow-x-auto hidden">
+    <table class="w-full text-sm text-left">
+        <thead>
+            <!-- Headers will be dynamically inserted here -->
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>
+<div id="fin-tab-cashflow" class="flex-1 overflow-x-auto hidden">
+    <table class="w-full text-sm text-left">
+        <thead>
+            <!-- Headers will be dynamically inserted here -->
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically inserted here -->
+        </tbody>
+    </table>
 </div>
 </div></div>
          <div id="view-unit" class="hidden"><div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -987,9 +956,68 @@
             document.getElementById('page-title').innerText = titles[viewId];
         }
 
+        function switchFinTab(tabName) {
+            const tabs = ['income', 'balance', 'cashflow'];
+            tabs.forEach(t => {
+                const el = document.getElementById('fin-tab-' + t);
+                if (el) el.classList.toggle('hidden', t !== tabName);
+            });
+
+            document.querySelectorAll('.fin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-600', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+
+            const activeBtn = document.getElementById('btn-fin-' + tabName);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-slate-600', 'text-white');
+                activeBtn.classList.remove('text-gray-400');
+            }
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(num);
+        }
+
+        function populateFinancialTables() {
+            const years = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'];
+            const headerHtml = `
+                <tr class="border-b border-slate-700/50 text-gray-400 uppercase">
+                    <th class="px-4 py-3 font-medium">Account</th>
+                    ${years.map(y => `<th class="px-4 py-3 font-medium text-right">${y}</th>`).join('')}
+                </tr>`;
+
+            // Income Statement
+            const incomeBody = `
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Revenue</td>${BASE_DATA.revenue.map(d => `<td class="px-4 py-3 text-right">${formatNumber(d)}</td>`).join('')}</tr>
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Net Income</td>${BASE_DATA.netIncome.map(d => `<td class="px-4 py-3 text-right">${formatNumber(d)}</td>`).join('')}</tr>
+            `;
+            document.querySelector('#fin-tab-income table thead').innerHTML = headerHtml;
+            document.querySelector('#fin-tab-income table tbody').innerHTML = incomeBody;
+
+            // Balance Sheet (Simplified)
+            const balanceBody = `
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Cash & Equivalents</td>${BASE_DATA.jCurveCash.slice(0,5).map(d => `<td class="px-4 py-3 text-right">${formatNumber(d)}</td>`).join('')}</tr>
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Total Assets</td>${BASE_DATA.jCurveCash.slice(0,5).map(d => `<td class="px-4 py-3 text-right font-bold">${formatNumber(d)}</td>`).join('')}</tr>
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Capital + Retained Earnings</td>${BASE_DATA.jCurveCash.slice(0,5).map(d => `<td class="px-4 py-3 text-right">${formatNumber(d)}</td>`).join('')}</tr>
+                 <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Total Equity</td>${BASE_DATA.jCurveCash.slice(0,5).map(d => `<td class="px-4 py-3 text-right font-bold">${formatNumber(d)}</td>`).join('')}</tr>
+            `;
+            document.querySelector('#fin-tab-balance table thead').innerHTML = headerHtml;
+            document.querySelector('#fin-tab-balance table tbody').innerHTML = balanceBody;
+
+            // Cash Flow
+            const cashFlowBody = `
+                <tr class="border-b border-slate-800/50"><td class="px-4 py-3 font-semibold">Operating Cash Flow</td>${BASE_DATA.cashFlow.map(d => `<td class="px-4 py-3 text-right">${formatNumber(d)}</td>`).join('')}</tr>
+            `;
+            document.querySelector('#fin-tab-cashflow table thead').innerHTML = headerHtml;
+            document.querySelector('#fin-tab-cashflow table tbody').innerHTML = cashFlowBody;
+        }
+
         // Init
         window.onload = () => {
             initCharts();
+            populateFinancialTables();
+            switchView('dashboard');
             updateScenario(1); // Set to Base Case
         };
 
