@@ -1,424 +1,748 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OwenAI | Investor Command Center</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#0B1120',
-                            sidebar: '#0F172A', // Slate 900
-                            card: 'rgba(15, 23, 42, 0.5)', // Slate 900 / 50%
-                            border: 'rgba(255, 255, 255, 0.1)', // White / 10%
-                            blue: '#3B82F6',
-                            green: '#10B981',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0B1120; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        body {
-            background-color: #0B1120;
-            color: white;
-        }
-
-        .glass-card {
-            background-color: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background-color: rgba(30, 41, 59, 0.6);
-            transition: all 0.3s ease;
-        }
-
-        /* Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: transparent; /* Handled by JS for fill effect */
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #3B82F6;
-            cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-            position: relative;
-            z-index: 2;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: transparent;
-            border-radius: 2px;
-        }
-
-        .nav-item.active {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: #60A5FA;
-            border-right: 2px solid #3B82F6;
-        }
-
-        .gradient-text {
-            background: linear-gradient(to right, #3B82F6, #EC4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Circular Progress */
-        .circular-chart {
-            display: block;
-            margin: 0 auto;
-            max-width: 80%;
-            max-height: 250px;
-        }
-        .circle-bg {
-            fill: none;
-            stroke: rgba(30, 41, 59, 0.5); /* Slate 800/50 */
-            stroke-width: 2.5;
-        }
-        .circle {
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            animation: progress 1s ease-out forwards;
-        }
-        @keyframes progress {
-            0% { stroke-dasharray: 0 100; }
-        }
-    </style>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OwenAI Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#4F46E5", // A vibrant indigo, close to the active state in sidebar
+            "background-light": "#F3F4F6", // Light gray for light mode
+            "background-dark": "#0D1117", // Deep navy/charcoal for dark mode
+          },
+          fontFamily: {
+            display: ["Manrope", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.75rem", // 12px
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .glassmorphism-dark {
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        transform-style: preserve-3d;
+        transform: translateZ(0);transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    }
+    .glassmorphism-light {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        transform-style: preserve-3d;
+        transform: translateZ(0);
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    }
+    .hover-lift:hover {
+        transform: translateZ(10px) translateY(-5px);
+    }
+    .hover-lift {
+        box-shadow:0px 2px 2px rgba(0,0,0,0.1),
+            0px 4px 4px rgba(0,0,0,0.1),
+            0px 6px 6px rgba(0,0,0,0.1),0 20px 40px -10px rgba(0, 0, 0, 0.4);
+    }
+    .icon-glow-green {
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+    }
+    .icon-glow-blue {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+    }
+    .icon-3d {
+      position: relative;
+      transform-style: preserve-3d;
+      animation: gentle-pulse 4s ease-in-out infinite;
+    }
+    .icon-3d .material-symbols-outlined {
+      font-size: 28px;
+      transform: translateZ(10px);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    @keyframes gentle-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .holographic-grid-bg {
+        position: relative;
+        perspective: 1000px;
+        overflow: hidden;
+    }
+    .holographic-grid-bg::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image:
+            linear-gradient(rgba(13, 17, 23, 0) 0%, rgba(13, 17, 23, 1) 100%),
+            linear-gradient(90deg, #4f46e533 1px, transparent 1px),
+            linear-gradient(#4f46e533 1px, transparent 1px);
+        background-size: 100% 100%, 50px 50px, 50px 50px;
+        z-index: -1;
+        transform-origin: 50% 100%;
+        transform: rotateX(60deg) translateY(20%);
+        animation: move-grid 20s linear infinite;
+    }
+    @keyframes move-grid {
+        0% { background-position: 0 0, 0 0, 0 0; }
+        100% { background-position: 0 0, -100px 0, 0 -100px; }
+    }
+  </style>
 </head>
-<body class="h-screen flex overflow-hidden text-sm antialiased selection:bg-blue-500 selection:text-white">
-
-    <!-- LEFT SIDEBAR (Desktop) -->
-    <aside class="w-64 bg-slate-900 border-r border-white/5 flex-col hidden md:flex z-20 flex-shrink-0">
-        <!-- Brand -->
-        <div class="h-16 flex items-center px-6 border-b border-white/5">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white mr-3 shadow-lg shadow-blue-500/20">OA</div>
-            <div>
-                <h1 class="font-bold text-white tracking-tight">OwenAI</h1>
-                <div class="text-[10px] text-slate-400 uppercase tracking-wider">Investor Portal</div>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-300 dark:text-gray-300">
+<div class="flex h-screen relative holographic-grid-bg">
+<aside class="w-64 flex-shrink-0 p-4" style="perspective: 1000px;">
+<div class="flex h-full flex-col glassmorphism-light dark:glassmorphism-dark rounded-xl hover-lift">
+<div class="flex items-center gap-2 p-4 border-b border-slate-300/20 dark:border-slate-700/50">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">auto_awesome</span>
+</div>
+<h1 class="text-xl font-bold text-gray-800 dark:text-white">OwenAI Logo</h1>
+</div>
+<nav class="flex-1 p-2 space-y-1">
+<a id="nav-dashboard" class="flex items-center gap-3 px-3 py-2 rounded-md bg-primary text-white font-semibold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a onclick="switchView('financial')" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span>Financial Statements</span>
+</a>
+<a id="nav-unit" onclick="switchView('unit')" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<span>Unit Economics</span>
+</a>
+<a id="nav-valuation" onclick="switchView('valuation')" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">waterfall_chart</span>
+<span>Valuation Bridge</span>
+</a>
+<a onclick="switchView('dataroom')" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span>Data Room / Docs</span>
+</a>
+</nav>
+<div class="p-2 border-t border-slate-300/20 dark:border-slate-700/50" style="display: none;">
+<div class="px-3 pt-2 pb-2 text-xs font-semibold uppercase text-gray-500 dark:text-gray-500">Subscribe &amp; Get Support</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">subscriptions</span>
+<span>Subscriptions</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700/50 text-gray-600 dark:text-gray-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col p-6 overflow-y-auto" style="perspective: 1000px;">
+    <!-- HEADER -->
+     <header class="flex items-center justify-between pb-6">
+        <h2 id="page-title" class="text-3xl font-bold text-white">Dashboard</h2>
+        <div class="flex items-center gap-4">
+            <div id="scenario-buttons" class="flex items-center glassmorphism-dark p-1 rounded-full">
+                <button id="btn-conservative" onclick="updateScenario(0)" class="scenario-btn px-4 py-1.5 text-sm rounded-full text-gray-400">Conservative</button>
+                <button id="btn-base" onclick="updateScenario(1)" class="scenario-btn px-4 py-1.5 text-sm rounded-full bg-slate-600 text-white font-semibold">Base Case</button>
+                <button id="btn-optimistic" onclick="updateScenario(2)" class="scenario-btn px-4 py-1.5 text-sm rounded-full text-gray-400">Optimistic</button>
             </div>
+            <input type="range" min="0" max="2" step="1" value="1" class="hidden" id="scenarioSlider" oninput="updateScenario(this.value)">
         </div>
+    </header>
 
-        <!-- Navigation -->
-        <nav class="flex-1 py-6 space-y-1">
-            <a href="#" onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item active flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors group">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                Dashboard
-            </a>
-            <a href="#" onclick="switchView('unit')" id="nav-unit" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                Unit Economics
-            </a>
-            <a href="#" onclick="switchView('valuation')" id="nav-valuation" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Valuation Bridge
-            </a>
-            <div class="px-6 pt-4 pb-2">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Settings</div>
-            </div>
-             <a href="#" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Configuration
-            </a>
-        </nav>
-
-        <!-- User Profile -->
-        <div class="p-4 border-t border-white/5">
-            <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=John+Doe&background=0D8ABC&color=fff" alt="User" class="w-8 h-8 rounded-full border border-white/10">
-                <div>
-                    <div class="text-sm font-medium text-white">Investor</div>
-                    <div class="text-xs text-slate-500">investor@vc.com</div>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col relative min-w-0 overflow-hidden bg-[#0B1120]">
-
-        <!-- TOP HEADER -->
-        <header class="h-16 bg-slate-900/50 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 md:px-8 z-10">
-            <div class="flex items-center gap-4">
-                <h2 id="page-title" class="text-xl font-semibold text-white">Dashboard</h2>
-            </div>
-
-            <!-- Scenario Slider -->
-            <div class="flex items-center gap-4 bg-slate-800/50 px-4 py-2 rounded-full border border-white/5">
-                <span class="text-xs text-slate-400 font-medium uppercase tracking-wide hidden sm:inline">Scenario</span>
-                <input type="range" min="0" max="2" step="1" value="1" class="w-24 sm:w-32" id="scenarioSlider" oninput="updateScenario(this.value)">
-                <span class="text-xs font-bold text-blue-400 w-20 text-right" id="scenarioLabel">Base Case</span>
-            </div>
-        </header>
-
-        <!-- SCROLLABLE CONTENT AREA -->
-        <div class="flex-1 overflow-y-auto p-6 pb-24 scroll-smooth">
-            <div class="max-w-7xl mx-auto space-y-6">
-
-                <!-- VIEW: DASHBOARD -->
-                <div id="view-dashboard" class="animate-fade-in space-y-6">
-                    <!-- Row 1: Metrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Card 1: MOIC -->
-                        <div class="glass-card p-5 rounded-xl relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full -mr-6 -mt-6 blur-xl"></div>
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Implied MOIC</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_moic">190.5x</div>
-                            <div class="text-xs text-green-400 mt-2 font-medium flex items-center">
-                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
-                                Venture Scale Return
-                            </div>
+    <!-- VIEWS CONTAINER -->
+    <div id="views-container">
+        <!-- VIEW: DASHBOARD -->
+        <div id="view-dashboard">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                <!-- Card 1: Revenue -->
+                <div class="p-4 rounded-xl glassmorphism-dark hover-lift">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-400">Year 5 Revenue</p>
+                            <p class="text-3xl font-bold text-white mt-1" id="hero_rev">AED 145.1M</p>
+                            <p class="text-sm text-green-500 mt-2">Hypergrowth Phase</p>
                         </div>
-
-                        <!-- Card 2: LTV Ratio -->
-                        <div class="glass-card p-5 rounded-xl">
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">LTV : CPAT Ratio</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_ltv">15.0 : 1</div>
-                            <div class="text-xs text-blue-400 mt-2 font-medium">
+                        <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center icon-glow-green icon-3d">
+                            <span class="material-symbols-outlined text-green-400">paid</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: LTV -->
+                <div class="p-4 rounded-xl glassmorphism-dark hover-lift">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-400">Efficiency (LTV:CAC)</p>
+                            <p class="text-3xl font-bold text-white mt-1" id="hero_ltv">15.0x</p>
+                             <div class="text-sm text-blue-400 mt-2 font-medium">
                                 Payback: <span id="hero_payback" class="text-white">1.6</span> Months
                             </div>
                         </div>
-
-                        <!-- Card 3: Revenue -->
-                        <div class="glass-card p-5 rounded-xl relative overflow-hidden">
-                            <div class="absolute bottom-0 right-0 w-20 h-20 bg-purple-500/10 rounded-tl-full -mr-6 -mb-6 blur-xl"></div>
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Year 5 Revenue</div>
-                            <div class="text-3xl font-bold text-white tracking-tight gradient-text" id="hero_rev">AED 145M</div>
-                            <div class="text-xs text-purple-400 mt-2 font-medium">
-                                94% CAGR (Hypergrowth)
-                            </div>
-                        </div>
-
-                        <!-- Card 4: Breakeven -->
-                        <div class="glass-card p-5 rounded-xl">
-                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Cash Flow Positive</div>
-                            <div class="text-3xl font-bold text-white tracking-tight" id="hero_breakeven">Month 6</div>
-                            <div class="text-xs text-orange-400 mt-2 font-medium">
-                                Rapid De-Risking
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- J-Curve -->
-                        <div class="glass-card p-6 rounded-xl flex flex-col h-96">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Capital Efficiency (Year 1)</h3>
-                                    <p class="text-xs text-slate-400">Monthly Net Burn vs. Cumulative Cash Balance</p>
-                                </div>
-                                <span class="bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] px-2 py-1 rounded-full font-bold">Profitable in 6 Months</span>
-                            </div>
-                            <div class="flex-1 relative w-full h-full">
-                                <canvas id="jCurveChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Valuation Waterfall -->
-                        <div class="glass-card p-6 rounded-xl flex flex-col h-96">
-                             <div class="flex justify-between items-center mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Path to Value Creation</h3>
-                                    <p class="text-xs text-slate-400">From Seed Investment to Year 5 Equity Value</p>
-                                </div>
-                                <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] px-2 py-1 rounded-full font-bold">4.0x Rev Multiple</span>
-                            </div>
-                            <div class="flex-1 relative w-full h-full">
-                                <canvas id="valuationChart"></canvas>
-                            </div>
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center icon-glow-blue icon-3d">
+                            <span class="material-symbols-outlined text-blue-400">settings_suggest</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- VIEW: UNIT ECONOMICS -->
-                <div id="view-unit" class="hidden animate-fade-in space-y-6">
-                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Unit Eco Card 1 -->
-                        <div class="glass-card p-10 rounded-xl flex flex-col justify-center items-center relative overflow-hidden h-96">
-                            <div class="w-full flex justify-between items-start mb-auto">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">The Economic Engine</h3>
-                                    <p class="text-xs text-slate-400">Efficiency at Scale</p>
-                                </div>
-                                <div class="bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-500/20">Elite Tier</div>
-                            </div>
-
-                            <div class="text-center mb-auto">
-                                <div class="text-7xl font-bold text-white tracking-tighter mb-3 drop-shadow-2xl" id="unit_ltv_ratio">15.0 : 1</div>
-                                <div class="text-sm text-blue-500 font-bold uppercase tracking-[0.2em]">LTV : CPAT Ratio</div>
-                            </div>
-
-                            <div class="w-full p-4 bg-slate-800/50 rounded-lg border border-white/5 mt-auto">
-                                <p class="text-sm text-slate-300 text-center">
-                                    For every <span class="text-white font-bold">AED 1</span> spent on GTM, OwenAI generates <span class="text-green-400 font-bold">AED 15</span> in Lifetime Value.
-                                </p>
-                            </div>
+                <!-- Card 3: MOIC -->
+                <div class="p-4 rounded-xl glassmorphism-dark hover-lift">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-400">MOIC</p>
+                            <p class="text-3xl font-bold text-white mt-1" id="hero_moic">85.2x</p>
+                            <p class="text-sm text-green-500 mt-2">Venture Scale Return</p>
                         </div>
-
-                        <!-- Unit Eco Card 2 -->
-                        <div class="glass-card p-10 rounded-xl flex flex-col items-center justify-center relative h-96">
-                            <div class="w-full flex justify-between items-start absolute top-10 left-10">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">Payback Velocity</h3>
-                                    <p class="text-xs text-slate-400">Time to recover CAC</p>
-                                </div>
-                            </div>
-
-                            <div class="relative mt-8">
-                                <svg viewBox="0 0 36 36" class="circular-chart w-56 h-56">
-                                    <path class="circle-bg"
-                                      d="M18 2.0845
-                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                    <path class="circle" stroke="#3B82F6" stroke-dasharray="86, 100"
-                                      d="M18 2.0845
-                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                    />
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-5xl font-bold text-white tracking-tight">1.6</span>
-                                    <span class="text-xs text-slate-400 uppercase mt-1 tracking-wide">Months</span>
-                                </div>
-                            </div>
-
-                            <div class="absolute bottom-10 text-xs text-center text-slate-500 max-w-xs px-4">
-                                Best-in-class B2B SaaS benchmarks suggest < 12 months. OwenAI achieves this in < 2 months.
-                            </div>
-                        </div>
-                     </div>
-                </div>
-
-                <!-- VIEW: VALUATION BRIDGE -->
-                <div id="view-valuation" class="hidden animate-fade-in space-y-6">
-                    <!-- Header Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="glass-card p-6 rounded-xl">
-                            <div class="text-xs text-slate-400 uppercase font-medium tracking-wider mb-2">Initial Investment</div>
-                            <div class="text-3xl font-bold text-white">AED 4M</div>
-                        </div>
-                        <div class="glass-card p-6 rounded-xl">
-                             <div class="text-xs text-slate-400 uppercase font-medium tracking-wider mb-2">Total Value Created</div>
-                            <div class="text-3xl font-bold text-white" id="val_created">AED 758M</div>
-                        </div>
-                        <div class="glass-card p-6 rounded-xl border-blue-500/30 bg-blue-900/10 relative overflow-hidden">
-                             <div class="absolute right-0 top-0 w-32 h-32 bg-blue-500/20 rounded-bl-full blur-2xl -mr-10 -mt-10"></div>
-                             <div class="text-xs text-blue-400 uppercase font-bold tracking-wider mb-2">Final Equity Value</div>
-                            <div class="text-3xl font-bold text-white relative z-10" id="val_final_equity">AED 762M</div>
-                        </div>
-                    </div>
-
-                    <!-- Big Bridge Chart -->
-                    <div class="glass-card p-8 rounded-xl h-[500px] flex flex-col">
-                        <div class="mb-8">
-                            <h3 class="text-xl font-bold text-white">Value Creation Bridge: Seed to Exit</h3>
-                            <p class="text-xs text-slate-400 mt-1">Attribution of equity value generation over 5 years</p>
-                        </div>
-                        <div class="flex-1 relative w-full h-full">
-                            <canvas id="bridgeChart"></canvas>
+                        <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center icon-glow-green icon-3d">
+                            <span class="material-symbols-outlined text-green-400">trending_up</span>
                         </div>
                     </div>
                 </div>
+                 <!-- Card 4: Breakeven -->
+                <div class="p-4 rounded-xl glassmorphism-dark hover-lift">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-400">Breakeven</p>
+                            <p class="text-3xl font-bold text-white mt-1" id="hero_breakeven">Month 6</p>
+                            <p class="text-sm text-green-500 mt-2">Rapid De-risking</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center icon-glow-blue icon-3d">
+                            <span class="material-symbols-outlined text-blue-400">update</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                 <!-- Valuation Bridge Bar -->
+                <div class="p-6 rounded-xl glassmorphism-dark hover-lift h-96 flex flex-col">
+                    <h3 class="text-lg font-semibold text-white mb-4">Valuation Bridge</h3>
+                    <div class="flex-1 relative w-full h-full">
+                        <canvas id="valuationChart"></canvas>
+                    </div>
+                </div>
+                <!-- J-Curve -->
+                <div class="p-6 rounded-xl glassmorphism-dark hover-lift h-96 flex flex-col">
+                    <h3 class="text-lg font-semibold text-white mb-4">Capital Efficiency (J-Curve)</h3>
+                     <div class="flex-1 relative w-full h-full">
+                        <canvas id="jCurveChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- STICKY FOOTER -->
-        <div class="absolute bottom-0 left-0 right-0 h-16 bg-slate-900/95 backdrop-blur border-t border-blue-500/20 flex items-center justify-between px-6 md:px-8 z-30 shadow-[0_-10px_40px_-15px_rgba(59,130,246,0.3)]">
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
-                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full absolute top-0 left-0 animate-ping opacity-75"></div>
-                </div>
-                <div class="text-sm font-medium text-slate-300">
-                    Raising <span class="text-white font-bold text-lg ml-1">AED 4,000,000</span> for <span class="text-blue-400 font-bold text-lg ml-1">17% Equity</span>
-                </div>
-            </div>
-            <button class="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:scale-105 border border-blue-400/20">
-                Invest Now
-            </button>
-        </div>
-    </main>
-
-    <!-- MOBILE NAV (Bottom) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-slate-900 border-t border-white/10 flex items-center justify-around z-40 pb-safe">
-         <a href="#" onclick="switchView('dashboard')" class="flex flex-col items-center text-blue-500">
-            <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            <span class="text-[10px]">Dash</span>
-        </a>
-        <a href="#" onclick="switchView('unit')" class="flex flex-col items-center text-slate-500 hover:text-white">
-            <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-            <span class="text-[10px]">Units</span>
-        </a>
-        <a href="#" onclick="switchView('valuation')" class="flex flex-col items-center text-slate-500 hover:text-white">
-             <svg class="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span class="text-[10px]">Value</span>
-        </a>
-    </nav>
-
-    <!-- DATA LOGIC ENGINE -->
-    <script>
+        <!-- OTHER VIEWS (Initially Hidden) -->
+         <div id="view-financial" class="hidden"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-400">Total Revenue (Q3)</p>
+<p class="text-3xl font-bold text-white mt-1 holographic-text" data-text="AED 35.8M">AED 35.8M</p>
+<p class="text-sm text-green-500 mt-2">+5.2% vs Q2</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center holographic-icon">
+<span class="material-symbols-outlined text-green-400" data-icon="paid">paid</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-400">Net Income (Q3)</p>
+<p class="text-3xl font-bold text-white mt-1 holographic-text" data-text="AED 8.2M">AED 8.2M</p>
+<p class="text-sm text-green-500 mt-2">+12.1% vs Q2</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -1.5s;">
+<span class="material-symbols-outlined text-green-400" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-400">Total Assets</p>
+<p class="text-3xl font-bold text-white mt-1 holographic-text" data-text="AED 120.5M">AED 120.5M</p>
+<p class="text-sm text-green-500 mt-2">+2.3% vs Q2</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -3s;">
+<span class="material-symbols-outlined text-blue-400" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-400">Operating Cash Flow</p>
+<p class="text-3xl font-bold text-white mt-1 holographic-text" data-text="AED 15.1M">AED 15.1M</p>
+<p class="text-sm text-red-500 mt-2">-1.5% vs Q2</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -4.5s;">
+<span class="material-symbols-outlined text-red-400" data-icon="swap_vert">swap_vert</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 p-6 rounded-xl glassmorphism-light dark:glassmorphism-dark flex flex-col hover-lift">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-1 border border-slate-700/50 rounded-lg p-1">
+<button class="px-4 py-1.5 text-sm rounded-md bg-slate-600 text-white font-semibold">Income Statement</button>
+<button class="px-4 py-1.5 text-sm rounded-md text-gray-400">Balance Sheet</button>
+<button class="px-4 py-1.5 text-sm rounded-md text-gray-400">Cash Flow</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<select class="appearance-none w-48 pl-4 pr-10 py-2 rounded-md bg-black/20 border border-slate-700/50 focus:ring-2 focus:ring-primary focus:border-primary text-gray-300">
+<option>Q3 2024</option>
+<option>Q2 2024</option>
+<option>Q1 2024</option>
+<option>Q4 2023</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="border-b border-slate-700/50 text-gray-400 uppercase">
+<tr>
+<th class="px-4 py-3 font-medium">Account</th>
+<th class="px-4 py-3 font-medium text-right">Q3 2024</th>
+<th class="px-4 py-3 font-medium text-right">Q2 2024</th>
+<th class="px-4 py-3 font-medium text-right">Change</th>
+</tr>
+</thead>
+<tbody class="text-gray-300">
+<tr class="border-b border-slate-800/50">
+<td class="px-4 py-3 font-semibold">Revenue</td>
+<td class="px-4 py-3 text-right">35,800,000</td>
+<td class="px-4 py-3 text-right">34,020,000</td>
+<td class="px-4 py-3 text-right text-green-400">+5.2%</td>
+</tr>
+<tr class="border-b border-slate-800/50">
+<td class="px-4 py-3 font-semibold">Cost of Goods Sold</td>
+<td class="px-4 py-3 text-right">(14,320,000)</td>
+<td class="px-4 py-3 text-right">(14,000,000)</td>
+<td class="px-4 py-3 text-right text-red-400">+2.3%</td>
+</tr>
+<tr class="border-b border-slate-800/50">
+<td class="px-4 py-3 font-bold">Gross Profit</td>
+<td class="px-4 py-3 font-bold text-right">21,480,000</td>
+<td class="px-4 py-3 font-bold text-right">20,020,000</td>
+<td class="px-4 py-3 font-bold text-right text-green-400">+7.3%</td>
+</tr>
+<tr class="border-b border-slate-800/50">
+<td class="px-4 py-3 pl-8">Operating Expenses</td>
+<td class="px-4 py-3 text-right">(8,500,000)</td>
+<td class="px-4 py-3 text-right">(8,200,000)</td>
+<td class="px-4 py-3 text-right text-red-400">+3.7%</td>
+</tr>
+<tr class="border-b border-slate-800/50">
+<td class="px-4 py-3 font-bold">Operating Income</td>
+<td class="px-4 py-3 font-bold text-right">12,980,000</td>
+<td class="px-4 py-3 font-bold text-right">11,820,000</td>
+<td class="px-4 py-3 font-bold text-right text-green-400">+9.8%</td>
+</tr>
+<tr>
+<td class="px-4 py-3 font-bold text-lg">Net Income</td>
+<td class="px-4 py-3 font-bold text-lg text-right">8,200,000</td>
+<td class="px-4 py-3 font-bold text-lg text-right">7,310,000</td>
+<td class="px-4 py-3 font-bold text-lg text-right text-green-400">+12.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+         <div id="view-unit" class="hidden"><div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-600 dark:text-gray-400">Customer Acquisition Cost</p>
+<p class="text-3xl font-bold text-gray-900 dark:text-white mt-1 holographic-text" data-text="AED 1,250">AED 1,250</p>
+<p class="text-sm text-red-500 mt-2">-5.2% vs last month</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center holographic-icon">
+<span class="material-symbols-outlined text-red-400" data-icon="person_add">person_add</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-600 dark:text-gray-400">Customer Lifetime Value</p>
+<p class="text-3xl font-bold text-gray-900 dark:text-white mt-1 holographic-text" data-text="AED 18,750">AED 18,750</p>
+<p class="text-sm text-green-500 mt-2">+13% vs last month</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -2s;">
+<span class="material-symbols-outlined text-green-400" data-icon="attach_money">attach_money</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-sm text-gray-600 dark:text-gray-400">LTV:CAC Ratio</p>
+<p class="text-3xl font-bold text-gray-900 dark:text-white mt-1 holographic-text" data-text="15.0x">15.0x</p>
+<p class="text-sm text-green-500 mt-2">+12.8% vs last month</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -4s;">
+<span class="material-symbols-outlined text-blue-400" data-icon="insights">insights</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<div class="lg:col-span-2 p-6 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">LTV vs. CAC Over Time</h3>
+<div class="h-80" style="position: relative;">
+<div class="absolute inset-0 grid grid-cols-12 grid-rows-6 gap-x-2">
+<div class="col-span-1 border-r border-slate-700/50 flex items-end justify-center pb-1 text-xs text-gray-500">20k</div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1 border-r border-slate-700/50 flex items-end justify-center pb-1 text-xs text-gray-500">16k</div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1 border-r border-slate-700/50 flex items-end justify-center pb-1 text-xs text-gray-500">12k</div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1 border-r border-slate-700/50 flex items-end justify-center pb-1 text-xs text-gray-500">8k</div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1 border-r border-slate-700/50 flex items-end justify-center pb-1 text-xs text-gray-500">4k</div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1 border-r border-slate-700/50"></div>
+<div class="col-span-11 border-b border-slate-700/50"></div>
+<div class="col-span-1"></div>
+<div class="col-span-11 grid grid-cols-12 text-xs text-gray-500 text-center pt-1">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+</div>
+</div>
+<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" style="transform: translate(calc(100%/24), 0);" viewBox="0 0 550 200">
+<path d="M0,150 C50,120 100,110 150,90 C200,70 250,60 300,50 C350,40 400,30 450,25 C500,20 550,15" fill="none" stroke="#4ade80" stroke-width="2" style="filter: drop-shadow(0 0 5px #4ade80);"></path>
+<path d="M0,180 C50,178 100,182 150,175 C200,168 250,172 300,165 C350,158 400,160 450,155 C500,150 550,152" fill="none" stroke="#f87171" stroke-width="2" style="filter: drop-shadow(0 0 5px #f87171);"></path>
+</svg>
+</div>
+</div>
+<div class="p-6 rounded-xl glassmorphism-light dark:glassmorphism-dark hover-lift">
+<h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Cohort Analysis</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span>Jan 2024 Cohort</span>
+<span class="font-semibold text-white">85% Retained</span>
+</div>
+<div class="w-full h-2 bg-slate-700 rounded-full"><div class="w-[85%] h-full bg-green-500 rounded-full" style="box-shadow: 0 0 8px #4ade80;"></div></div>
+<div class="flex justify-between items-center text-sm">
+<span>Feb 2024 Cohort</span>
+<span class="font-semibold text-white">78% Retained</span>
+</div>
+<div class="w-full h-2 bg-slate-700 rounded-full"><div class="w-[78%] h-full bg-green-500 rounded-full" style="box-shadow: 0 0 8px #4ade80;"></div></div>
+<div class="flex justify-between items-center text-sm">
+<span>Mar 2024 Cohort</span>
+<span class="font-semibold text-white">92% Retained</span>
+</div>
+<div class="w-full h-2 bg-slate-700 rounded-full"><div class="w-[92%] h-full bg-teal-400 rounded-full" style="box-shadow: 0 0 8px #2dd4bf;"></div></div>
+<div class="flex justify-between items-center text-sm">
+<span>Apr 2024 Cohort</span>
+<span class="font-semibold text-white">65% Retained</span>
+</div>
+<div class="w-full h-2 bg-slate-700 rounded-full"><div class="w-[65%] h-full bg-yellow-500 rounded-full" style="box-shadow: 0 0 8px #eab308;"></div></div>
+<div class="flex justify-between items-center text-sm">
+<span>May 2024 Cohort</span>
+<span class="font-semibold text-white">55% Retained</span>
+</div>
+<div class="w-full h-2 bg-slate-700 rounded-full"><div class="w-[55%] h-full bg-red-500 rounded-full" style="box-shadow: 0 0 8px #ef4444;"></div></div>
+</div>
+</div>
+</div>
+<div class="flex-1 p-6 rounded-xl glassmorphism-light dark:glassmorphism-dark flex flex-col hover-lift">
+<h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Detailed Metrics Breakdown</h3>
+<div class="flex-1 overflow-x-auto">
+<table class="w-full text-sm text-left">
+<thead class="border-b border-slate-300/20 dark:border-slate-700/50 text-gray-500 dark:text-gray-400 uppercase">
+<tr>
+<th class="px-4 py-3 font-medium">Metric</th>
+<th class="px-4 py-3 font-medium">Current Value</th>
+<th class="px-4 py-3 font-medium">Target</th>
+<th class="px-4 py-3 font-medium">MoM Change</th>
+<th class="px-4 py-3 font-medium">Status</th>
+</tr>
+</thead>
+<tbody class="text-gray-700 dark:text-gray-300">
+<tr class="border-b border-slate-200/20 dark:border-slate-800/50">
+<td class="px-4 py-3 font-semibold">CAC</td>
+<td class="px-4 py-3">AED 1,250</td>
+<td class="px-4 py-3"> &lt; AED 1,500</td>
+<td class="px-4 py-3 font-semibold text-green-400">-5.2%</td>
+<td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">Healthy</span></td>
+</tr>
+<tr class="border-b border-slate-200/20 dark:border-slate-800/50">
+<td class="px-4 py-3 font-semibold">LTV</td>
+<td class="px-4 py-3">AED 18,750</td>
+<td class="px-4 py-3">&gt; AED 15,000</td>
+<td class="px-4 py-3 font-semibold text-green-400">+13.0%</td>
+<td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">Exceeding</span></td>
+</tr>
+<tr class="border-b border-slate-200/20 dark:border-slate-800/50">
+<td class="px-4 py-3 font-semibold">LTV:CAC Ratio</td>
+<td class="px-4 py-3">15.0x</td>
+<td class="px-4 py-3">&gt; 10x</td>
+<td class="px-4 py-3 font-semibold text-green-400">+12.8%</td>
+<td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">Exceeding</span></td>
+</tr>
+<tr class="border-b border-slate-200/20 dark:border-slate-800/50">
+<td class="px-4 py-3 font-semibold">Payback Period</td>
+<td class="px-4 py-3">4 Months</td>
+<td class="px-4 py-3">&lt; 6 Months</td>
+<td class="px-4 py-3 font-semibold text-green-400">-1 Month</td>
+<td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">Healthy</span></td>
+</tr>
+<tr>
+<td class="px-4 py-3 font-semibold">Churn Rate</td>
+<td class="px-4 py-3">2.5%</td>
+<td class="px-4 py-3">&lt; 3%</td>
+<td class="px-4 py-3 font-semibold text-red-400">+0.2%</td>
+<td class="px-4 py-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400">Monitor</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+         <div id="view-valuation" class="hidden"><div class="flex-1 grid grid-cols-12 gap-6">
+<div class="col-span-8 flex flex-col glassmorphism-light dark:glassmorphism-dark rounded-xl hover-lift p-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-semibold text-white">Valuation Drivers Breakdown</h3>
+<div class="flex items-center gap-2 text-sm text-gray-400">
+<span class="material-symbols-outlined text-base">calendar_today</span>
+<span>Jan 2023 - Dec 2028</span>
+</div>
+</div>
+<div class="flex-1 h-96 flex items-end justify-between px-2 text-xs text-center text-gray-400 bar-3d-container">
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 60px; height: 60px; --bar-color: rgba(34, 197, 94, 0.8); --bar-border-color: rgba(74, 222, 128, 0.5); --bar-color-glow: rgba(74, 222, 128, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Entry</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 120px; height: 120px; --bar-color: rgba(59, 130, 246, 0.8); --bar-border-color: rgba(96, 165, 250, 0.5); --bar-color-glow: rgba(96, 165, 250, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Revenue Growth</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 180px; height: 180px; --bar-color: rgba(59, 130, 246, 0.8); --bar-border-color: rgba(96, 165, 250, 0.5); --bar-color-glow: rgba(96, 165, 250, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Margin Expansion</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 150px; height: 150px; --bar-color: rgba(239, 68, 68, 0.8); --bar-border-color: rgba(248, 113, 113, 0.5); --bar-color-glow: rgba(248, 113, 113, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Share Dilution</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 220px; height: 220px; --bar-color: rgba(59, 130, 246, 0.8); --bar-border-color: rgba(96, 165, 250, 0.5); --bar-color-glow: rgba(96, 165, 250, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Multiple Expansion</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 260px; height: 260px; --bar-color: rgba(59, 130, 246, 0.8); --bar-border-color: rgba(96, 165, 250, 0.5); --bar-color-glow: rgba(96, 165, 250, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Cash Flow</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[12%]">
+<div class="w-full bar-3d cursor-pointer" style="--h: 300px; height: 300px; --bar-color: rgba(16, 185, 129, 0.8); --bar-border-color: rgba(52, 211, 153, 0.5); --bar-color-glow: rgba(52, 211, 153, 0.5);">
+<div class="bar-face front"></div><div class="bar-face back"></div><div class="bar-face left" style="width: 20px;"></div><div class="bar-face right" style="width: 20px;"></div><div class="bar-face top"></div><div class="bar-face bottom"></div>
+</div>
+<span class="bar-text-3d">Exit</span>
+</div>
+</div>
+</div>
+<div class="col-span-4 flex flex-col glassmorphism-light dark:glassmorphism-dark rounded-xl hover-lift p-6">
+<h3 class="text-lg font-semibold text-white mb-4">Scenario Controls</h3>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-400 mb-2" for="revenue-growth">Revenue Growth (CAGR)</label>
+<div class="flex items-center gap-4">
+<input class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer range-lg dark:bg-slate-700" id="revenue-growth" max="50" min="10" type="range" value="35"/>
+<span class="font-semibold text-white text-lg holographic-text" data-text="35%">35%</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-400 mb-2" for="ebitda-margin">Terminal EBITDA Margin</label>
+<div class="flex items-center gap-4">
+<input class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer range-lg dark:bg-slate-700" id="ebitda-margin" max="40" min="15" type="range" value="25"/>
+<span class="font-semibold text-white text-lg holographic-text" data-text="25%">25%</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-400 mb-2" for="exit-multiple">Exit Multiple (EV/EBITDA)</label>
+<div class="flex items-center gap-4">
+<input class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer range-lg dark:bg-slate-700" id="exit-multiple" max="25" min="5" type="range" value="15"/>
+<span class="font-semibold text-white text-lg holographic-text" data-text="15.0x">15.0x</span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-6 space-y-4">
+<div class="flex justify-between items-center p-3 rounded-lg bg-black/20">
+<div>
+<p class="text-sm text-gray-400">Projected Exit Valuation</p>
+<p class="text-2xl font-bold text-white holographic-text" data-text="AED 1.25B">AED 1.25B</p>
+</div>
+<div class="holographic-icon">
+<span class="material-symbols-outlined text-green-400" data-icon="rocket_launch">rocket_launch</span>
+</div>
+</div>
+<div class="flex justify-between items-center p-3 rounded-lg bg-black/20">
+<div>
+<p class="text-sm text-gray-400">Implied MOIC</p>
+<p class="text-2xl font-bold text-white holographic-text" data-text="25.0x">25.0x</p>
+</div>
+<div class="holographic-icon" style="animation-delay: -2s;">
+<span class="material-symbols-outlined text-blue-400" data-icon="insights">insights</span>
+</div>
+</div>
+<button class="w-full py-3 mt-2 rounded-lg bg-primary text-white font-semibold hover:bg-primary/80 transition-colors">Run Scenario</button>
+</div>
+</div>
+</div></div>
+         <div id="view-dataroom" class="hidden"><div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto pr-2">
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-indigo-500/20 flex items-center justify-center holographic-icon">
+<span class="material-symbols-outlined !text-4xl text-indigo-400" data-icon="description">description</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Financial Model.xlsx</h4>
+<p class="text-sm text-slate-400">Updated: 2 days ago</p>
+<p class="text-xs text-slate-500 mt-2">1.2 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-purple-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -1.5s;">
+<span class="material-symbols-outlined !text-4xl text-purple-400" data-icon="slideshow">slideshow</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Pitch Deck Q2.pptx</h4>
+<p class="text-sm text-slate-400">Updated: 5 days ago</p>
+<p class="text-xs text-slate-500 mt-2">5.8 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -3s;">
+<span class="material-symbols-outlined !text-4xl text-cyan-400" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Term Sheet.pdf</h4>
+<p class="text-sm text-slate-400">Updated: 1 week ago</p>
+<p class="text-xs text-slate-500 mt-2">256 KB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-orange-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -4.5s;">
+<span class="material-symbols-outlined !text-4xl text-orange-400" data-icon="folder_zip">folder_zip</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Legal Docs.zip</h4>
+<p class="text-sm text-slate-400">Updated: 1 week ago</p>
+<p class="text-xs text-slate-500 mt-2">12.3 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-green-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -0.5s;">
+<span class="material-symbols-outlined !text-4xl text-green-400" data-icon="image">image</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Product_UI_Mockups.png</h4>
+<p class="text-sm text-slate-400">Updated: 2 weeks ago</p>
+<p class="text-xs text-slate-500 mt-2">2.1 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-rose-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -2.5s;">
+<span class="material-symbols-outlined !text-4xl text-rose-400" data-icon="videocam">videocam</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Investor_Update_Call.mp4</h4>
+<p class="text-sm text-slate-400">Updated: 1 month ago</p>
+<p class="text-xs text-slate-500 mt-2">150.7 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-indigo-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -3.5s;">
+<span class="material-symbols-outlined !text-4xl text-indigo-400" data-icon="description">description</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Due Diligence Checklist.docx</h4>
+<p class="text-sm text-slate-400">Updated: 1 month ago</p>
+<p class="text-xs text-slate-500 mt-2">45 KB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+<div class="rounded-xl flex flex-col text-center p-6 holographic-item hover-lift">
+<div class="flex-shrink-0 mb-4">
+<div class="w-20 h-20 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center holographic-icon" style="animation-delay: -5.5s;">
+<span class="material-symbols-outlined !text-4xl text-cyan-400" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-semibold text-white mb-1">Employee Agreements.pdf</h4>
+<p class="text-sm text-slate-400">Updated: 2 months ago</p>
+<p class="text-xs text-slate-500 mt-2">3.4 MB</p>
+</div>
+<div class="mt-4 flex justify-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary rounded-full transition-colors"><span class="material-symbols-outlined text-base">download</span></button>
+<button class="p-2 text-slate-400 hover:text-white rounded-full transition-colors"><span class="material-symbols-outlined text-base">more_horiz</span></button>
+</div>
+</div>
+</div></div>
+    </div>
+</main>
+</div>
+<script>
         // --- DATA ENGINE (Unified with Source of Truth) ---
         const BASE_DATA = {
             revenue: [8969940, 27118500, 58987650, 98765432, 145123456],
@@ -569,53 +893,6 @@
                     }
                 }
             });
-
-            // --- VALUATION BRIDGE CHART (FULL VIEW) ---
-            const ctxB = document.getElementById('bridgeChart').getContext('2d');
-            bChart = new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: ['Initial Investment', 'Revenue Growth', 'Margin Expansion', 'Cash Accumulation', 'Total Equity Value'],
-                    datasets: [{
-                        label: 'Value Attribution',
-                        data: [], // Populated in updateScenario
-                        backgroundColor: waterfallColors,
-                        borderRadius: 6,
-                        barPercentage: 0.5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            titleColor: '#fff',
-                            callbacks: {
-                                label: function(context) {
-                                    let val = context.raw[1] || context.raw;
-                                    if (Array.isArray(context.raw)) val = context.raw[1] - context.raw[0];
-                                    return "AED " + (val / 1000000).toFixed(1) + "M";
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: (val) => (val/1000000).toFixed(0) + 'M',
-                                font: { size: 12 }
-                            },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 12 } }
-                        }
-                    }
-                }
-            });
         }
 
         // --- LOGIC ---
@@ -626,18 +903,24 @@
 
             // 1. Update Slider UI (Progress Fill)
             const sliderEl = document.getElementById('scenarioSlider');
-            const percentage = (sliderEl.value - sliderEl.min) / (sliderEl.max - sliderEl.min) * 100;
-            sliderEl.style.background = `linear-gradient(to right, #3B82F6 ${percentage}%, #1e293b ${percentage}%)`;
+            sliderEl.value = val;
 
-            // 2. Update Label
-            const labelEl = document.getElementById('scenarioLabel');
-            labelEl.innerText = scen.name;
-            labelEl.className = `text-xs font-bold w-20 text-right ${scen.labelClass}`;
+            // 2. Update Button UI
+            document.querySelectorAll('.scenario-btn').forEach((btn, index) => {
+                if (index === currentScenario) {
+                    btn.classList.add('bg-slate-600', 'text-white', 'font-semibold');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('bg-slate-600', 'text-white', 'font-semibold');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
 
             // 3. Core Math
             const y5Rev = BASE_DATA.revenue[4] * mult;
             const y5Cash = 181392396 * mult; // Approx scaling of cumulative cash
-            const ev = y5Rev * 4.0; // 4.0x Multiple
+            const ev = y5Rev * 2.35; // Exit multiple updated to 2.35x
             const eqVal = ev + y5Cash; // Equity Value = Enterprise Value + Cash
             const seed = 4000000;
             const moic = eqVal / seed;
@@ -647,100 +930,59 @@
             // 4. DOM Text Updates
             document.getElementById('hero_moic').innerText = moic.toFixed(1) + "x";
             document.getElementById('hero_rev').innerText = "AED " + (y5Rev/1000000).toFixed(0) + "M";
-            document.getElementById('hero_ltv').innerText = ltv.toFixed(1) + " : 1";
+            document.getElementById('hero_ltv').innerText = ltv.toFixed(1) + "x";
+            document.getElementById('hero_breakeven').innerText = "Month " + (mult > 1.0 ? 5 : (mult < 1.0 ? 8 : 6));
 
-            if(document.getElementById('unit_ltv_ratio')) {
-                document.getElementById('unit_ltv_ratio').innerText = ltv.toFixed(1) + " : 1";
-            }
-
-            if(document.getElementById('val_final_equity')) {
-                document.getElementById('val_final_equity').innerText = "AED " + (eqVal/1000000).toFixed(0) + "M";
-            }
-
-            if(document.getElementById('val_created')) {
-                 document.getElementById('val_created').innerText = "AED " + (valCreated/1000000).toFixed(0) + "M";
-            }
 
             // 5. Chart Updates
-            // A. J-Curve: Scale data slightly by mult
             if (jChart) {
-                const scaledCash = BASE_DATA.jCurveCash.map(v => v * mult);
+                const scaledCash = BASE_DATA.jCurveCash.map(v => v * (mult > 1.0 ? 1.1 : (mult < 1.0 ? 0.9 : 1.0)));
                 const scaledBurn = BASE_DATA.jCurveBurn.map(v => v * mult);
                 jChart.data.datasets[0].data = scaledCash;
                 jChart.data.datasets[1].data = scaledBurn;
                 jChart.update();
             }
 
-            // B. Waterfall Data Construction
-            // Components: Seed (4M) -> Rev Growth -> Margin -> Cash -> Total
-            // We need to back-solve the "Waterfall" components to sum to EqVal.
-            // Let's assume proportional growth for the intermediate steps based on the Base Case logic.
-
-            // Base Case (approx):
-            // Rev (145M * 4 = 580M EV) + Cash (181M) = 761M EqVal.
-            // Waterfall Steps:
-            // 1. Seed: 4M
-            // 2. Rev Growth: The bulk of EV (e.g. 250M)
-            // 3. Margin Expansion: The rest of EV (e.g. 330M) -> Total EV = 580M
-            // 4. Cash Accumulation: 181M
-
-            // Dynamic logic:
-            const revComponent = (y5Rev * 4.0) * 0.45; // 45% of EV attributed to pure "Growth"
-            const marginComponent = (y5Rev * 4.0) * 0.55; // 55% attributed to "Margin"
+            const revComponent = (y5Rev * 2.35) * 0.45;
+            const marginComponent = (y5Rev * 2.35) * 0.55;
             const cashComponent = y5Cash;
 
             const w1 = seed;
             const w2 = w1 + revComponent;
             const w3 = w2 + marginComponent;
-            const w4 = w3 + cashComponent; // Should equal eqVal
+            const w4 = w3 + cashComponent;
 
             const newWaterfallData = [
-                [0, w1], // Seed
-                [w1, w2], // Growth
-                [w2, w3], // Margin
-                [w3, w4], // Cash
-                [0, w4]   // Total
+                [0, w1],
+                [w1, w2],
+                [w2, w3],
+                [w3, w4],
+                [0, w4]
             ];
 
             if (vChart) {
                 vChart.data.datasets[0].data = newWaterfallData;
                 vChart.update();
             }
-            if (bChart) {
-                bChart.data.datasets[0].data = newWaterfallData;
-                bChart.update();
-            }
         }
 
-        // View Switching Logic
         function switchView(viewId) {
-            // Hide all views
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-unit').classList.add('hidden');
-            document.getElementById('view-valuation').classList.add('hidden');
-
-            // Show selected view
-            document.getElementById('view-' + viewId).classList.remove('hidden');
-
-            // Update Nav State
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active', 'text-blue-400', 'bg-blue-500/10', 'border-r-2', 'border-blue-500');
-                el.classList.add('text-slate-400');
+            const views = ['dashboard', 'financial', 'unit', 'valuation', 'dataroom'];
+            views.forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if (el) el.classList.toggle('hidden', v !== viewId);
             });
 
-            // Add active class to current nav item
-            const navId = 'nav-' + viewId;
-            const navEl = document.getElementById(navId);
-            if(navEl) {
-                navEl.classList.add('active', 'text-blue-400', 'bg-blue-500/10', 'border-r-2', 'border-blue-500');
-                navEl.classList.remove('text-slate-400');
-            }
+            document.querySelectorAll('nav a').forEach(el => el.classList.remove('bg-primary', 'text-white'));
+            const activeLink = document.querySelector(`nav a[onclick*="${viewId}"]`);
+            if (activeLink) activeLink.classList.add('bg-primary', 'text-white');
 
-            // Update Title
             const titles = {
                 'dashboard': 'Dashboard',
+                'financial': 'Financial Statements',
                 'unit': 'Unit Economics',
-                'valuation': 'Valuation Bridge'
+                'valuation': 'Valuation Bridge',
+                'dataroom': 'Data Room'
             };
             document.getElementById('page-title').innerText = titles[viewId];
         }
@@ -748,11 +990,8 @@
         // Init
         window.onload = () => {
             initCharts();
-            // Force initial slider update
-            const slider = document.getElementById('scenarioSlider');
-            updateScenario(slider.value);
+            updateScenario(1); // Set to Base Case
         };
 
     </script>
-</body>
-</html>
+</body></html>
